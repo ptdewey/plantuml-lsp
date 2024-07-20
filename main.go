@@ -53,6 +53,15 @@ func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 		msg := lsp.NewInitializeResponse(request.ID)
 		writeResponse(writer, msg)
 
+		go func() {
+			// TODO: call item fetcher
+			err := state.GetFeatures()
+			if err != nil {
+				log.Println(err)
+			}
+
+		}()
+
 		logger.Print("Sent the reply")
 	case "textDocument/didOpen":
 		var request lsp.DidOpenTextDocumentNotification

@@ -2,6 +2,7 @@ package parse
 
 import (
 	"fmt"
+	"plantuml_lsp/lsp"
 	"regexp"
 	"strings"
 )
@@ -33,6 +34,7 @@ func ExtractC4Items(text string) []C4Item {
 			typeBuf = append(typeBuf, strings.TrimSpace(strings.TrimPrefix(line, "'")))
 		} else if strings.HasPrefix(line, "!") {
 			// handle procedure definitions
+			// TODO: store locations for goto definition later
 			if procMatch := procRe.FindStringSubmatch(line); procMatch != nil {
 				out = append(out, C4Item{
 					Name:          procMatch[2],
@@ -56,6 +58,7 @@ func ExtractC4Items(text string) []C4Item {
 
 func formatDocs(name string, params string) string {
 	params = strings.TrimSpace(params)
+	// def := fmt.Sprintf("```python\n%s(%s)\n```", name, params) // NOTE: use this for somewhat working syntax highlights since plantuml doesn't have a parser for most editors
 	def := fmt.Sprintf("```puml\n%s(%s)\n```", name, params)
 
 	if params == "" {
@@ -80,4 +83,18 @@ func formatDocs(name string, params string) string {
 		}
 	}
 	return fmt.Sprintf("%s\n\nParameters: %s", def, strings.Join(out, ", "))
+}
+
+func C4ItemToCompletionItem(i C4Item) lsp.CompletionItem {
+	return lsp.CompletionItem{
+		Label:         i.Name,
+		Detail:        i.Type,
+		Documentation: i.Documentation,
+	}
+}
+
+func C4ItemToHoverResult(i C4Item) lsp.HoverResult {
+	return lsp.HoverResult{
+		Contents: i.Documentation,
+	}
 }

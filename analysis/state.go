@@ -2,8 +2,14 @@ package analysis
 
 import (
 	"fmt"
+	"plantuml_lsp/analysis/completion"
 	"plantuml_lsp/lsp"
 	"strings"
+)
+
+var (
+	completionItems []lsp.CompletionItem
+	hoverResults    []lsp.HoverResult
 )
 
 type State struct {
@@ -15,19 +21,23 @@ func NewState() State {
 	return State{Documents: map[string]string{}}
 }
 
+// TODO: options?
+func (s *State) GetFeatures() error {
+	// TODO: don't hardcode directory path
+	c, h, err := completion.GetFeatures("/home/patrick/projects/plantuml-stuff/plantuml-stdlib")
+	// TODO: possibly switch to log.Fatalf instead of return
+	if err != nil {
+		return err
+	}
+
+	completionItems = c
+	hoverResults = h
+	return nil
+}
+
 func getDiagnosticsForFile(text string) []lsp.Diagnostic {
 	diagnostics := []lsp.Diagnostic{}
 	for row, line := range strings.Split(text, "\n") {
-		if strings.Contains(line, "VS Code") {
-			idx := strings.Index(line, "VS Code")
-			diagnostics = append(diagnostics, lsp.Diagnostic{
-				Range:    LineRange(row, idx, idx+len("VS Code")),
-				Severity: 1,
-				Source:   "Common Sense",
-				Message:  "Please make sure we use good language in this video",
-			})
-		}
-
 		if strings.Contains(line, "Neovim") {
 			idx := strings.Index(line, "Neovim")
 			diagnostics = append(diagnostics, lsp.Diagnostic{
@@ -56,6 +66,7 @@ func (s *State) UpdateDocument(uri, text string) []lsp.Diagnostic {
 
 func (s *State) Hover(id int, uri string, position lsp.Position) lsp.HoverResponse {
 	// In real life, this would look up the type in our type analysis code...
+	// TODO: integrate hover here
 
 	document := s.Documents[uri]
 
@@ -141,22 +152,14 @@ func (s *State) TextDocumentCodeAction(id int, uri string) lsp.TextDocumentCodeA
 }
 
 func (s *State) TextDocumentCompletion(id int, uri string) lsp.CompletionResponse {
-
-	// Ask your static analysis tools to figure out good completions
-	items := []lsp.CompletionItem{
-		{
-			Label:         "Neovim (BTW)",
-			Detail:        "Very cool editor",
-			Documentation: "Fun to watch in videos. Don't forget to like & subscribe to streamers using it :)",
-		},
-	}
-
+	// TODO: always showing result as "Text" and not specified type
+	// see CompletionItemKind in docs https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#completionItemKind
 	response := lsp.CompletionResponse{
 		Response: lsp.Response{
 			RPC: "2.0",
 			ID:  &id,
 		},
-		Result: items,
+		Result: completionItems,
 	}
 
 	return response

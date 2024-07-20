@@ -1,4 +1,4 @@
-package stdlib
+package completion
 
 import (
 	"os"
@@ -7,8 +7,10 @@ import (
 	"plantuml_lsp/parse"
 )
 
-func GenC4Completions(c4dir string) error {
-	var items []parse.C4Item
+// TODO: add support for other lsp features (i.e. go to definition)
+func GetC4Items(c4dir string) ([]lsp.CompletionItem, []lsp.HoverResult, error) {
+	var completionItems []lsp.CompletionItem
+	var hoverResults []lsp.HoverResult
 
 	err := filepath.WalkDir(c4dir, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
@@ -20,17 +22,18 @@ func GenC4Completions(c4dir string) error {
 			if err != nil {
 				return err
 			}
-			items = append(items, parse.ExtractC4Items(string(content))...)
+			c4items := parse.ExtractC4Items(string(content))
+			for _, item := range c4items {
+				completionItems = append(completionItems, parse.C4ItemToCompletionItem(item))
+				hoverResults = append(hoverResults, parse.C4ItemToHoverResult(item))
+			}
 		}
 
 		return nil
 	})
 	if err != nil {
-		return err
+		return nil, nil, err
 	}
 
-	// TODO: convert to completionitem slice
-	lsp.CompletionItem
-
-	return nil
+	return completionItems, hoverResults, nil
 }
