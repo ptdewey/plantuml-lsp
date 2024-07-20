@@ -13,7 +13,7 @@ import (
 
 func main() {
 	// TODO: figure out how to link into vim lsp log
-	logger := getLogger("/home/patrick/projects/plantuml-lsp.git/c4/log.txt")
+	logger := getLogger("/home/patrick/projects/plantuml-lsp.git/go/log.txt")
 	logger.Println("Started plantuml-lsp")
 
 	scanner := bufio.NewScanner(os.Stdin)

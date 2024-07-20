@@ -25,12 +25,23 @@ func TestExtractC4Items(t *testing.T) {
 			want: []parse.C4Item{
 				{
 					Name:          "ExampleProc",
-					Type:          "procedure",
-					Documentation: "This is a procedure.",
-					Parameters: []parse.Parameter{
-						{Name: "param1", Optional: false},
-						{Name: "param2", Optional: true, DefaultValue: `"default"`},
-					},
+					Type:          "This is a procedure.",
+					Documentation: "```puml\nExampleProc(param1, param2 = \"default\")\n```\n\nParameters: param1 (required), param2 (optional, default: \"default\")",
+				},
+			},
+		},
+		{
+			name: "optional parameter with empty default value",
+			text: `
+' This is a procedure with empty default.
+' ##################
+!procedure ExampleProcWithEmptyDefault(param1, param2 = "")
+`,
+			want: []parse.C4Item{
+				{
+					Name:          "ExampleProcWithEmptyDefault",
+					Type:          "This is a procedure with empty default.",
+					Documentation: "```puml\nExampleProcWithEmptyDefault(param1, param2 = \"\")\n```\n\nParameters: param1 (required), param2 (optional)",
 				},
 			},
 		},
@@ -46,19 +57,13 @@ func TestExtractC4Items(t *testing.T) {
 			want: []parse.C4Item{
 				{
 					Name:          "FirstProc",
-					Type:          "procedure",
-					Documentation: "This is the first procedure.\nThis is the second procedure.",
-					Parameters: []parse.Parameter{
-						{Name: "param1", Optional: false},
-					},
+					Type:          "This is the first procedure.\nThis is the second procedure.",
+					Documentation: "```puml\nFirstProc(param1)\n```\n\nParameters: param1 (required)",
 				},
 				{
 					Name:          "SecondProc",
-					Type:          "procedure",
-					Documentation: "This is the first procedure.\nThis is the second procedure.",
-					Parameters: []parse.Parameter{
-						{Name: "param2", Optional: true, DefaultValue: "42"},
-					},
+					Type:          "This is the first procedure.\nThis is the second procedure.",
+					Documentation: "```puml\nSecondProc(param2 = 42)\n```\n\nParameters: param2 (optional, default: 42)",
 				},
 			},
 		},
@@ -70,12 +75,8 @@ func TestExtractC4Items(t *testing.T) {
 			want: []parse.C4Item{
 				{
 					Name:          "NoDocsProc",
-					Type:          "procedure",
-					Documentation: "",
-					Parameters: []parse.Parameter{
-						{Name: "param1", Optional: false},
-						{Name: "param2", Optional: false},
-					},
+					Type:          "",
+					Documentation: "```puml\nNoDocsProc(param1, param2)\n```\n\nParameters: param1 (required), param2 (required)",
 				},
 			},
 		},
@@ -93,19 +94,13 @@ func TestExtractC4Items(t *testing.T) {
 			want: []parse.C4Item{
 				{
 					Name:          "FirstProc",
-					Type:          "procedure",
-					Documentation: "Docs for FirstProc.",
-					Parameters: []parse.Parameter{
-						{Name: "param1", Optional: false},
-					},
+					Type:          "Docs for FirstProc.",
+					Documentation: "```puml\nFirstProc(param1)\n```\n\nParameters: param1 (required)",
 				},
 				{
 					Name:          "SecondProc",
-					Type:          "procedure",
-					Documentation: "Docs for SecondProc.\nDocs for SecondProc continued.",
-					Parameters: []parse.Parameter{
-						{Name: "param2", Optional: true, DefaultValue: "42"},
-					},
+					Type:          "Docs for SecondProc.\nDocs for SecondProc continued.",
+					Documentation: "```puml\nSecondProc(param2 = 42)\n```\n\nParameters: param2 (optional, default: 42)",
 				},
 			},
 		},
@@ -133,18 +128,5 @@ func TestExtractC4ItemsFromFile(t *testing.T) {
 		fmt.Printf("Name: %s\n", item.Name)
 		fmt.Printf("Type: %s\n", item.Type)
 		fmt.Printf("Documentation: %s\n", item.Documentation)
-		fmt.Println("Parameters:")
-		for _, param := range item.Parameters {
-			optionality := "Required"
-			if param.Optional {
-				optionality = "Optional"
-			}
-			defaultValue := ""
-			if param.DefaultValue != `""` && param.DefaultValue != "" {
-				defaultValue = fmt.Sprintf(" (default: %s)", param.DefaultValue)
-			}
-			fmt.Printf("  - %s: %s%s\n", param.Name, optionality, defaultValue)
-		}
-		fmt.Println()
 	}
 }

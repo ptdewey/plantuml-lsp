@@ -1,6 +1,7 @@
 package parse
 
 import (
+	"fmt"
 	"regexp"
 	"strings"
 )
@@ -8,43 +9,35 @@ import (
 type C4Item struct {
 	Name          string
 	Type          string
-	Parameters    []Parameter
 	Documentation string
-}
-
-type Parameter struct {
-	Name         string
-	Optional     bool
-	DefaultValue string
 }
 
 // text should be full text of a puml file containing c4 model definitions
 func ExtractC4Items(text string) []C4Item {
 	var out []C4Item
-	var currDocs string
-	var docsBuf []string
+	var currType string
+	var typeBuf []string
 
 	procRe := regexp.MustCompile(`^\s*!(unquoted\s+)?procedure\s+(\w+)\((.*)\)`)
 
 	for _, line := range strings.Split(text, "\n") {
 		// end of documentation block
 		if strings.HasPrefix(line, "' ##") {
-			currDocs = strings.Join(docsBuf, "\n")
-			docsBuf = []string{}
+			currType = strings.Join(typeBuf, "\n")
+			typeBuf = []string{}
 			continue
 		}
 
 		// handle doc comments
 		if strings.HasPrefix(line, "'") {
-			docsBuf = append(docsBuf, strings.TrimSpace(strings.TrimPrefix(line, "'")))
+			typeBuf = append(typeBuf, strings.TrimSpace(strings.TrimPrefix(line, "'")))
 		} else if strings.HasPrefix(line, "!") {
 			// handle procedure definitions
 			if procMatch := procRe.FindStringSubmatch(line); procMatch != nil {
 				out = append(out, C4Item{
 					Name:          procMatch[2],
-					Type:          "procedure", // TODO: possibly change this to currDocs and put something else in for documentation
-					Parameters:    parseParameters(procMatch[3]),
-					Documentation: currDocs,
+					Type:          currType,
+					Documentation: formatDocs(procMatch[2], procMatch[3]),
 				})
 			}
 			// TODO: plantuml functions
@@ -53,39 +46,38 @@ func ExtractC4Items(text string) []C4Item {
 		// reset docs buffer when non-comment line is found
 		// TODO: use newly found comments for next single item only
 		// - this will mainly be for functions once they are included
-		if !strings.HasPrefix(line, "'") && len(docsBuf) > 0 {
-			docsBuf = []string{}
+		if !strings.HasPrefix(line, "'") && len(typeBuf) > 0 {
+			typeBuf = []string{}
 		}
 	}
 
 	return out
 }
 
-func parseParameters(params string) []Parameter {
+func formatDocs(name string, params string) string {
 	params = strings.TrimSpace(params)
+	def := fmt.Sprintf("```puml\n%s(%s)\n```", name, params)
+
 	if params == "" {
-		return []Parameter{}
+		return def
 	}
 
-	var out []Parameter
+	var out = []string{}
 
 	for _, param := range strings.Split(params, ",") {
 		param = strings.TrimSpace(param)
 		if strings.Contains(param, "=") {
 			parts := strings.SplitN(param, "=", 2)
-			out = append(out, Parameter{
-				Name:         strings.TrimSpace(parts[0]),
-				Optional:     true,
-				DefaultValue: strings.TrimSpace(parts[1]),
-			})
+			name := strings.TrimSpace(parts[0])
+			defaultValue := strings.TrimSpace(parts[1])
+			if defaultValue == `""` {
+				out = append(out, fmt.Sprintf("%s (optional)", name))
+			} else {
+				out = append(out, fmt.Sprintf("%s (optional, default: %s)", name, defaultValue))
+			}
 		} else {
-			out = append(out, Parameter{
-				Name:         param,
-				Optional:     false,
-				DefaultValue: "",
-			})
+			out = append(out, fmt.Sprintf("%s (required)", param))
 		}
 	}
-
-	return out
+	return fmt.Sprintf("%s\n\nParameters: %s", def, strings.Join(out, ", "))
 }
