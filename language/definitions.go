@@ -2,6 +2,7 @@ package language
 
 type LangDefs struct {
 	Defs []string
+
 	// CompletionItemKind:
 	// Text = 1; Method = 2; Function = 3; Constructor = 4; Field = 5; Variable
 	// = 6; Class = 7; Interface = 8;

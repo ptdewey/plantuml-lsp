@@ -15,7 +15,7 @@ func (s *State) TextDocumentCodeAction(id int, uri string) lsp.TextDocumentCodeA
 			replaceChange := map[string][]lsp.TextEdit{}
 			replaceChange[uri] = []lsp.TextEdit{
 				{
-					Range:   LineRange(row, idx, idx+len("text")),
+					Range:   lineRange(row, idx, idx+len("text")),
 					NewText: "different text",
 				},
 			}
@@ -36,4 +36,17 @@ func (s *State) TextDocumentCodeAction(id int, uri string) lsp.TextDocumentCodeA
 	}
 
 	return response
+}
+
+func lineRange(line, start, end int) lsp.Range {
+	return lsp.Range{
+		Start: lsp.Position{
+			Line:      line,
+			Character: start,
+		},
+		End: lsp.Position{
+			Line:      line,
+			Character: end,
+		},
+	}
 }

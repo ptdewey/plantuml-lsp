@@ -10,7 +10,7 @@ func getDiagnosticsForFile(text string) []lsp.Diagnostic {
 	// 	if strings.Contains(line, "text") {
 	// 		idx := strings.Index(line, "text")
 	// 		diagnostics = append(diagnostics, lsp.Diagnostic{
-	// 			Range:    LineRange(row, idx, idx+len("text")),
+	// 			Range:    lineRange(row, idx, idx+len("text")),
 	// 			Severity: 2,
 	// 			Source:   "plantuml-lsp",
 	// 			Message:  "message",

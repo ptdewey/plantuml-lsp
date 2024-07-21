@@ -11,15 +11,13 @@ type C4Item struct {
 	Name          string
 	Type          string
 	Documentation string
-	Kind          int
-}
 
-/**
- * CompletionItemKind:
- * Text = 1; Method = 2; Function = 3; Constructor = 4; Field = 5; Variable = 6; Class = 7; Interface = 8;
- * Module = 9; Property = 10; Unit = 11; Value = 12; Enum = 13; Keyword = 14; Snippet = 15; Color = 16; File = 17;
- * Reference = 18; Folder = 19; EnumMember = 20; Constant = 21; Struct = 22; Event = 23; Operator = 24; TypeParameter = 25;
- */
+	// CompletionItemKind:
+	// Text = 1; Method = 2; Function = 3; Constructor = 4; Field = 5; Variable = 6; Class = 7; Interface = 8;
+	// Module = 9; Property = 10; Unit = 11; Value = 12; Enum = 13; Keyword = 14; Snippet = 15; Color = 16; File = 17;
+	// Reference = 18; Folder = 19; EnumMember = 20; Constant = 21; Struct = 22; Event = 23; Operator = 24; TypeParameter = 25;
+	Kind int
+}
 
 // text should be full text of a puml file containing c4 model definitions
 func ExtractC4Items(text string) []C4Item {
@@ -86,19 +84,18 @@ func formatDocs(name string, params string) string {
 			name := strings.TrimSpace(parts[0])
 			defaultValue := strings.TrimSpace(parts[1])
 			if defaultValue == `""` {
-				out = append(out, fmt.Sprintf("%s (optional)", name))
+				out = append(out, fmt.Sprintf("`%s` (optional)", name))
 			} else {
-				out = append(out, fmt.Sprintf("%s (optional, default: %s)", name, defaultValue))
+				out = append(out, fmt.Sprintf("`%s` (optional, default: `%s`)", name, defaultValue))
 			}
 		} else {
-			out = append(out, fmt.Sprintf("%s (required)", param))
+			out = append(out, fmt.Sprintf("`%s` (required)", param))
 		}
 	}
-	return fmt.Sprintf("%s\n\nParameters: %s", def, strings.Join(out, ", "))
+	return fmt.Sprintf("%s\nParameters: %s\n\n[`stdlib/C4`](https://github.com/plantuml/plantuml-stdlib/tree/master/C4)", def, strings.Join(out, ", "))
 }
 
 func (i C4Item) C4ItemToCompletionItem() lsp.CompletionItem {
-	// func C4ItemToCompletionItem(i C4Item) lsp.CompletionItem {
 	return lsp.CompletionItem{
 		Label:         i.Name,
 		Detail:        i.Type,

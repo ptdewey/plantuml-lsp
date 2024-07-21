@@ -1,9 +1,9 @@
 package parse_test
 
 import (
-	"fmt"
-	"log"
-	"os"
+	// "fmt"
+	// "log"
+	// "os"
 	"plantuml_lsp/parse"
 	"reflect"
 	"testing"
@@ -26,7 +26,7 @@ func TestExtractC4Items(t *testing.T) {
 				{
 					Name:          "ExampleProc",
 					Type:          "This is a procedure.",
-					Documentation: "```puml\nExampleProc(param1, param2 = \"default\")\n```\n\nParameters: param1 (required), param2 (optional, default: \"default\")",
+					Documentation: "```rust\nExampleProc(param1, param2 = \"default\")\n```\nParameters: `param1` (required), `param2` (optional, default: `\"default\"`)\n\n[`stdlib/C4`](https://github.com/plantuml/plantuml-stdlib/tree/master/C4)",
 					Kind:          3,
 				},
 			},
@@ -42,7 +42,7 @@ func TestExtractC4Items(t *testing.T) {
 				{
 					Name:          "ExampleProcWithEmptyDefault",
 					Type:          "This is a procedure with empty default.",
-					Documentation: "```puml\nExampleProcWithEmptyDefault(param1, param2 = \"\")\n```\n\nParameters: param1 (required), param2 (optional)",
+					Documentation: "```rust\nExampleProcWithEmptyDefault(param1, param2 = \"\")\n```\nParameters: `param1` (required), `param2` (optional)\n\n[`stdlib/C4`](https://github.com/plantuml/plantuml-stdlib/tree/master/C4)",
 					Kind:          3,
 				},
 			},
@@ -60,13 +60,13 @@ func TestExtractC4Items(t *testing.T) {
 				{
 					Name:          "FirstProc",
 					Type:          "This is the first procedure.\nThis is the second procedure.",
-					Documentation: "```puml\nFirstProc(param1)\n```\n\nParameters: param1 (required)",
+					Documentation: "```rust\nFirstProc(param1)\n```\nParameters: `param1` (required)\n\n[`stdlib/C4`](https://github.com/plantuml/plantuml-stdlib/tree/master/C4)",
 					Kind:          3,
 				},
 				{
 					Name:          "SecondProc",
 					Type:          "This is the first procedure.\nThis is the second procedure.",
-					Documentation: "```puml\nSecondProc(param2 = 42)\n```\n\nParameters: param2 (optional, default: 42)",
+					Documentation: "```rust\nSecondProc(param2 = 42)\n```\nParameters: `param2` (optional, default: `42`)\n\n[`stdlib/C4`](https://github.com/plantuml/plantuml-stdlib/tree/master/C4)",
 					Kind:          3,
 				},
 			},
@@ -80,7 +80,7 @@ func TestExtractC4Items(t *testing.T) {
 				{
 					Name:          "NoDocsProc",
 					Type:          "",
-					Documentation: "```puml\nNoDocsProc(param1, param2)\n```\n\nParameters: param1 (required), param2 (required)",
+					Documentation: "```rust\nNoDocsProc(param1, param2)\n```\nParameters: `param1` (required), `param2` (required)\n\n[`stdlib/C4`](https://github.com/plantuml/plantuml-stdlib/tree/master/C4)",
 					Kind:          3,
 				},
 			},
@@ -100,13 +100,13 @@ func TestExtractC4Items(t *testing.T) {
 				{
 					Name:          "FirstProc",
 					Type:          "Docs for FirstProc.",
-					Documentation: "```puml\nFirstProc(param1)\n```\n\nParameters: param1 (required)",
+					Documentation: "```rust\nFirstProc(param1)\n```\nParameters: `param1` (required)\n\n[`stdlib/C4`](https://github.com/plantuml/plantuml-stdlib/tree/master/C4)",
 					Kind:          3,
 				},
 				{
 					Name:          "SecondProc",
 					Type:          "Docs for SecondProc.\nDocs for SecondProc continued.",
-					Documentation: "```puml\nSecondProc(param2 = 42)\n```\n\nParameters: param2 (optional, default: 42)",
+					Documentation: "```rust\nSecondProc(param2 = 42)\n```\nParameters: `param2` (optional, default: `42`)\n\n[`stdlib/C4`](https://github.com/plantuml/plantuml-stdlib/tree/master/C4)",
 					Kind:          3,
 				},
 			},
@@ -122,19 +122,18 @@ func TestExtractC4Items(t *testing.T) {
 	}
 }
 
-// Test function to read in a PlantUML file and print the output
-func TestExtractC4ItemsFromFile(t *testing.T) {
-	filePath := "/home/patrick/projects/plantuml-stuff/plantuml-stdlib/C4/C4_Container.puml"
-	content, err := os.ReadFile(filePath)
-	if err != nil {
-		log.Fatalf("Error reading file: %v", err)
-	}
-
-	c4Items := parse.ExtractC4Items(string(content))
-	for _, item := range c4Items {
-		fmt.Printf("Name: %s\n", item.Name)
-		fmt.Printf("Type: %s\n", item.Type)
-		fmt.Printf("Documentation: %s\n", item.Documentation)
-		fmt.Printf("Kind: %d\n", item.Kind)
-	}
-}
+// func TestExtractC4ItemsFromFile(t *testing.T) {
+// 	filePath := "/home/patrick/projects/plantuml-stuff/plantuml-stdlib/C4/C4_Container.puml"
+// 	content, err := os.ReadFile(filePath)
+// 	if err != nil {
+// 		log.Fatalf("Error reading file: %v", err)
+// 	}
+//
+// 	c4Items := parse.ExtractC4Items(string(content))
+// 	for _, item := range c4Items {
+// 		fmt.Printf("Name: %s\n", item.Name)
+// 		fmt.Printf("Type: %s\n", item.Type)
+// 		fmt.Printf("Documentation: %s\n", item.Documentation)
+// 		fmt.Printf("Kind: %d\n", item.Kind)
+// 	}
+// }

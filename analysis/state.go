@@ -5,6 +5,8 @@ import (
 	"plantuml_lsp/lsp"
 )
 
+// TODO: should these be moved to State?
+// - possibly not since GetFeatures is being called asynchronously
 var (
 	completionItems []lsp.CompletionItem
 	hoverResults    map[string]lsp.HoverResult
@@ -35,17 +37,4 @@ func (s *State) UpdateDocument(uri, text string) []lsp.Diagnostic {
 // - pass in std lib directory path
 func (s *State) GetFeatures() {
 	completionItems, hoverResults = completion.GetFeatures("/home/patrick/projects/plantuml-stuff/plantuml-stdlib")
-}
-
-func LineRange(line, start, end int) lsp.Range {
-	return lsp.Range{
-		Start: lsp.Position{
-			Line:      line,
-			Character: start,
-		},
-		End: lsp.Position{
-			Line:      line,
-			Character: end,
-		},
-	}
 }

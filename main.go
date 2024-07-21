@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"os"
@@ -13,7 +14,7 @@ import (
 
 func main() {
 	// TODO: figure out how to link into vim lsp log
-	logger := getLogger("/home/patrick/projects/plantuml-lsp.git/go/log.txt")
+	logger := getLogger("/home/patrick/projects/plantuml-lsp.git/dev/log.txt")
 	logger.Println("Started plantuml-lsp")
 
 	scanner := bufio.NewScanner(os.Stdin)
@@ -27,7 +28,7 @@ func main() {
 		msg := scanner.Bytes()
 		method, contents, err := rpc.DecodeMessage(msg)
 		if err != nil {
-			logger.Printf("Got an error: %s", err)
+			logger.Println(err)
 			continue
 		}
 
@@ -42,7 +43,7 @@ func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 	case "initialize":
 		var request lsp.InitializeRequest
 		if err := json.Unmarshal(contents, &request); err != nil {
-			logger.Printf("Hey, we couldn't parse this: %s", err)
+			logger.Printf("Could not parse initialize request: %s", err)
 		}
 
 		logger.Printf("Connected to: %s %s",
@@ -51,13 +52,14 @@ func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 
 		msg := lsp.NewInitializeResponse(request.ID)
 		writeResponse(writer, msg)
+		logger.Print("Sent the reply")
 
-		// fetch language features
 		go func() {
+			fmt.Println("Fetching language features...")
 			state.GetFeatures()
+			fmt.Println("Language features initialized.")
 		}()
 
-		logger.Print("Sent the reply")
 	case "textDocument/didOpen":
 		var request lsp.DidOpenTextDocumentNotification
 		if err := json.Unmarshal(contents, &request); err != nil {
@@ -77,6 +79,7 @@ func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 				Diagnostics: diagnostics,
 			},
 		})
+
 	case "textDocument/didChange":
 		var request lsp.TextDocumentDidChangeNotification
 		if err := json.Unmarshal(contents, &request); err != nil {
@@ -98,6 +101,7 @@ func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 				},
 			})
 		}
+
 	case "textDocument/hover":
 		var request lsp.HoverRequest
 		if err := json.Unmarshal(contents, &request); err != nil {
@@ -105,11 +109,9 @@ func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 			return
 		}
 
-		// Create a response
 		response := state.Hover(request.ID, request.Params.TextDocument.URI, request.Params.Position)
-
-		// Write it back
 		writeResponse(writer, response)
+
 	case "textDocument/definition":
 		var request lsp.DefinitionRequest
 		if err := json.Unmarshal(contents, &request); err != nil {
@@ -117,11 +119,9 @@ func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 			return
 		}
 
-		// Create a response
 		response := state.Definition(request.ID, request.Params.TextDocument.URI, request.Params.Position)
-
-		// Write it back
 		writeResponse(writer, response)
+
 	case "textDocument/codeAction":
 		var request lsp.CodeActionRequest
 		if err := json.Unmarshal(contents, &request); err != nil {
@@ -129,11 +129,9 @@ func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 			return
 		}
 
-		// Create a response
 		response := state.TextDocumentCodeAction(request.ID, request.Params.TextDocument.URI)
-
-		// Write it back
 		writeResponse(writer, response)
+
 	case "textDocument/completion":
 		var request lsp.CompletionRequest
 		if err := json.Unmarshal(contents, &request); err != nil {
@@ -141,10 +139,7 @@ func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 			return
 		}
 
-		// Create a response
 		response := state.TextDocumentCompletion(request.ID, request.Params.TextDocument.URI)
-
-		// Write it back
 		writeResponse(writer, response)
 	}
 }
@@ -154,14 +149,14 @@ func writeResponse(writer io.Writer, msg any) {
 	if err != nil {
 		return
 	}
-	writer.Write([]byte(reply))
 
+	writer.Write([]byte(reply))
 }
 
 func getLogger(filename string) *log.Logger {
 	logfile, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0666)
 	if err != nil {
-		panic("hey, you didnt give me a good file")
+		panic(err)
 	}
 
 	return log.New(logfile, "[plantuml-lsp]", log.Ldate|log.Ltime|log.Lshortfile)

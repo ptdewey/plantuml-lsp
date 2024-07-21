@@ -3,7 +3,20 @@ package analysis
 import "plantuml_lsp/lsp"
 
 func (s *State) Definition(id int, uri string, position lsp.Position) lsp.DefinitionResponse {
-	// TODO: look up definition (if possible)
+	document := s.Documents[uri]
+
+	currWord := getCurrentWord(document, position)
+	_, exists := hoverResults[currWord] // TODO: go to definition
+
+	if !exists {
+		return lsp.DefinitionResponse{
+			Response: lsp.Response{
+				RPC: "2.0",
+				ID:  &id,
+			},
+		}
+	}
+
 	return lsp.DefinitionResponse{
 		Response: lsp.Response{
 			RPC: "2.0",

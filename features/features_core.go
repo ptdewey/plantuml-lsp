@@ -23,8 +23,8 @@ func getCoreItems() ([]lsp.CompletionItem, map[string]lsp.HoverResult) {
 
 func definitionToCompletionItem(defs language.LangDefs, completionItems *[]lsp.CompletionItem, hoverResults map[string]lsp.HoverResult) {
 	for _, def := range defs.Defs {
-		// doc := fmt.Sprintf("core:\n```puml\n%s\n```", def)
-		doc := fmt.Sprintf("core:\n```rust\n%s\n```", def) // NOTE: using rust syntax highlighting since puml doesn't have a treesitter parser
+		doc := fmt.Sprintf("```puml\n%s\n```\n[`plantuml/core`](https://github.com/plantuml/plantuml)", def)
+		// TODO: currently, @, !, - completions are not being shown initially
 		*completionItems = append(*completionItems, lsp.CompletionItem{
 			Label:         def,
 			Detail:        "", // TODO: Do something with this?

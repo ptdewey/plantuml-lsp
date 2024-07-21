@@ -28,7 +28,7 @@ func getC4Items(c4dir string) ([]lsp.CompletionItem, map[string]lsp.HoverResult)
 			c4items := parse.ExtractC4Items(string(content))
 			for _, item := range c4items {
 				// add value if it is not a duplicate
-				if _, ok := hoverResults[item.Name]; !ok {
+				if _, exists := hoverResults[item.Name]; !exists {
 					completionItems = append(completionItems, item.C4ItemToCompletionItem())
 					hoverResults[item.Name] = item.C4ItemToHoverResult()
 				}

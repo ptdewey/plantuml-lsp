@@ -2,18 +2,18 @@
 
 An implementation of the language server protocol (LSP) for PlantUML.
 
+**Disclaimer: This project is very early in devlopment, so many features will be missing.**
+Contributions are welcome, please open an issue or PR if you would like to add something.
+
 
 ## Installation
 
-TODO: (requires cloning stdlib repo)
+TODO:
+(for the best experience, this lsp requires cloning stdlib repo)
 
 ---
 
 ## Capabilities
-
-**Disclaimer: This project is very early in devlopment, so many features will be missing.**
-
-Contributions are welcome, please open an issue or PR if you would like to add something.
 
 #### Completion:
 - [x] Core (WIP)
@@ -22,26 +22,31 @@ Contributions are welcome, please open an issue or PR if you would like to add s
 - [ ] stdlib/C4 (WIP)
     - [x] Procedures
     - [ ] Functions, globals, defines, constants, variables (Todo)
-    - [ ] Snippets (Todo)
 - [ ] Other stdlib (Todo)
 - [ ] User Defined (Todo)
 
+- [ ] Snippets (Todo)
+    - [ ] Core (Todo)
+    - [ ] stdlib/C4 (Todo)
+
 #### Hover
-- [ ] Core (Backlog)
-- [ ] stdlib/C4 (WIP)
-- [ ] other stdlib (Backlog)
+- [x] Core
+    - [ ] Examples usage (Backlog)
+- [x] stdlib/C4
+    - [ ] Example usage (Backlog)
+- [ ] Other stdlib (Backlog)
 - [ ] User Defined (Backlog)
 
 #### Definition
-- [ ] Core (Backlog)
-- [ ] stdlib/C4 (Backlog)
-- [ ] other stdlib (Backlog)
+- [ ] Core (Might be impossible with plantuml project structure)
+- [ ] stdlib/C4 (Todo)
+- [ ] Other stdlib (Backlog)
 - [ ] User Defined (Backlog)
 
 #### Diagnostics
 - [ ] Core (Backlog)
 - [ ] stdlib/C4 (Backlog)
-- [ ] other stdlib (Backlog)
+- [ ] Other stdlib (Backlog)
 - [ ] User Defined (Backlog)
 
 #### Other Language Server Features
