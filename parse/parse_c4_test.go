@@ -27,6 +27,7 @@ func TestExtractC4Items(t *testing.T) {
 					Name:          "ExampleProc",
 					Type:          "This is a procedure.",
 					Documentation: "```puml\nExampleProc(param1, param2 = \"default\")\n```\n\nParameters: param1 (required), param2 (optional, default: \"default\")",
+					Kind:          3,
 				},
 			},
 		},
@@ -42,6 +43,7 @@ func TestExtractC4Items(t *testing.T) {
 					Name:          "ExampleProcWithEmptyDefault",
 					Type:          "This is a procedure with empty default.",
 					Documentation: "```puml\nExampleProcWithEmptyDefault(param1, param2 = \"\")\n```\n\nParameters: param1 (required), param2 (optional)",
+					Kind:          3,
 				},
 			},
 		},
@@ -59,11 +61,13 @@ func TestExtractC4Items(t *testing.T) {
 					Name:          "FirstProc",
 					Type:          "This is the first procedure.\nThis is the second procedure.",
 					Documentation: "```puml\nFirstProc(param1)\n```\n\nParameters: param1 (required)",
+					Kind:          3,
 				},
 				{
 					Name:          "SecondProc",
 					Type:          "This is the first procedure.\nThis is the second procedure.",
 					Documentation: "```puml\nSecondProc(param2 = 42)\n```\n\nParameters: param2 (optional, default: 42)",
+					Kind:          3,
 				},
 			},
 		},
@@ -77,6 +81,7 @@ func TestExtractC4Items(t *testing.T) {
 					Name:          "NoDocsProc",
 					Type:          "",
 					Documentation: "```puml\nNoDocsProc(param1, param2)\n```\n\nParameters: param1 (required), param2 (required)",
+					Kind:          3,
 				},
 			},
 		},
@@ -96,11 +101,13 @@ func TestExtractC4Items(t *testing.T) {
 					Name:          "FirstProc",
 					Type:          "Docs for FirstProc.",
 					Documentation: "```puml\nFirstProc(param1)\n```\n\nParameters: param1 (required)",
+					Kind:          3,
 				},
 				{
 					Name:          "SecondProc",
 					Type:          "Docs for SecondProc.\nDocs for SecondProc continued.",
 					Documentation: "```puml\nSecondProc(param2 = 42)\n```\n\nParameters: param2 (optional, default: 42)",
+					Kind:          3,
 				},
 			},
 		},
@@ -128,5 +135,6 @@ func TestExtractC4ItemsFromFile(t *testing.T) {
 		fmt.Printf("Name: %s\n", item.Name)
 		fmt.Printf("Type: %s\n", item.Type)
 		fmt.Printf("Documentation: %s\n", item.Documentation)
+		fmt.Printf("Kind: %d\n", item.Kind)
 	}
 }

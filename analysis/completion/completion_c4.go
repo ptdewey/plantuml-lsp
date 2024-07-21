@@ -8,7 +8,7 @@ import (
 )
 
 // TODO: add support for other lsp features (i.e. go to definition)
-func GetC4Items(c4dir string) ([]lsp.CompletionItem, []lsp.HoverResult, error) {
+func getC4Items(c4dir string) ([]lsp.CompletionItem, []lsp.HoverResult, error) {
 	var completionItems []lsp.CompletionItem
 	var hoverResults []lsp.HoverResult
 

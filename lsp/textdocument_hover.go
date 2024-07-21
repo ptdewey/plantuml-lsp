@@ -16,4 +16,5 @@ type HoverResponse struct {
 
 type HoverResult struct {
 	Contents string `json:"contents"`
+	// TODO: more can be extracted here (i.e. kind)
 }

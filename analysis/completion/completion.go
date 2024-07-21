@@ -1,7 +1,8 @@
 package completion
 
 import (
-	"fmt"
+	"log"
+	"path/filepath"
 	"plantuml_lsp/lsp"
 )
 
@@ -11,12 +12,19 @@ func GetFeatures(stdlibDir string) ([]lsp.CompletionItem, []lsp.HoverResult, err
 	var hoverResults []lsp.HoverResult
 
 	// TODO: call each getter function (or each requested)
-	c4cis, c4hrs, err := GetC4Items(fmt.Sprintf("%s/%s", stdlibDir, "C4")) // TODO: switch to filepath.Join instead of sprintf
+	c4cis, c4hrs, err := getC4Items(filepath.Join(stdlibDir, "C4"))
 	if err != nil {
-		return nil, nil, err
+		log.Println(err)
 	}
 	completionItems = append(completionItems, c4cis...)
 	hoverResults = append(hoverResults, c4hrs...)
+
+	ccis, chrs, err := getCoreItems()
+	if err != nil {
+		log.Println(err)
+	}
+	completionItems = append(completionItems, ccis...)
+	hoverResults = append(hoverResults, chrs...)
 
 	return completionItems, hoverResults, nil
 }
