@@ -68,6 +68,8 @@ func ExtractC4Items(text string) []C4Item {
 func formatDocs(name string, params string) string {
 	params = strings.TrimSpace(params)
 
+	// TODO: update documentation with core vs stdlib/lib to make things more clear
+
 	// def := fmt.Sprintf("```puml\n%s(%s)\n```", name, params)
 	def := fmt.Sprintf("```rust\n%s(%s)\n```", name, params) // NOTE: use this for somewhat working syntax highlights since plantuml doesn't have a parser for most editors
 
@@ -95,7 +97,8 @@ func formatDocs(name string, params string) string {
 	return fmt.Sprintf("%s\n\nParameters: %s", def, strings.Join(out, ", "))
 }
 
-func C4ItemToCompletionItem(i C4Item) lsp.CompletionItem {
+func (i C4Item) C4ItemToCompletionItem() lsp.CompletionItem {
+	// func C4ItemToCompletionItem(i C4Item) lsp.CompletionItem {
 	return lsp.CompletionItem{
 		Label:         i.Name,
 		Detail:        i.Type,
@@ -104,7 +107,7 @@ func C4ItemToCompletionItem(i C4Item) lsp.CompletionItem {
 	}
 }
 
-func C4ItemToHoverResult(i C4Item) lsp.HoverResult {
+func (i C4Item) C4ItemToHoverResult() lsp.HoverResult {
 	return lsp.HoverResult{
 		Contents: i.Documentation,
 	}

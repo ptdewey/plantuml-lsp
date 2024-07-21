@@ -2,7 +2,7 @@
 
 An implementation of the language server protocol (LSP) for PlantUML.
 
-
+;
 ## Installation
 
 TODO: (requires cloning stdlib repo)
@@ -16,8 +16,9 @@ TODO: (requires cloning stdlib repo)
 Contributions are welcome, please open an issue or PR if you would like to add something.
 
 #### Completion:
-- [ ] Core (WIP)
-    - [ ] Types, keywords, directives (WIP)
+- [x] Core (WIP)
+    - [x] Types, keywords, directives
+    - [ ] Colors, skinparams (Figuring out if these should be included)
 - [ ] stdlib/C4 (WIP)
     - [x] Procedures
     - [ ] Functions, globals, defines, constants, variables (Todo)

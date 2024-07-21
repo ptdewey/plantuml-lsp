@@ -17,6 +17,8 @@ func getC4Items(c4dir string) ([]lsp.CompletionItem, []lsp.HoverResult, error) {
 			return err
 		}
 
+		// TODO: don't add duplicate definitions (defined in multiple files)
+		// - probably use a map to check
 		if !d.IsDir() && filepath.Ext(d.Name()) == ".puml" {
 			content, err := os.ReadFile(path)
 			if err != nil {
@@ -24,8 +26,8 @@ func getC4Items(c4dir string) ([]lsp.CompletionItem, []lsp.HoverResult, error) {
 			}
 			c4items := parse.ExtractC4Items(string(content))
 			for _, item := range c4items {
-				completionItems = append(completionItems, parse.C4ItemToCompletionItem(item))
-				hoverResults = append(hoverResults, parse.C4ItemToHoverResult(item))
+				completionItems = append(completionItems, item.C4ItemToCompletionItem())
+				hoverResults = append(hoverResults, item.C4ItemToHoverResult())
 			}
 		}
 

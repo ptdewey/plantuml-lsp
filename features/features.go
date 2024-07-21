@@ -19,10 +19,7 @@ func GetFeatures(stdlibDir string) ([]lsp.CompletionItem, []lsp.HoverResult, err
 	completionItems = append(completionItems, c4cis...)
 	hoverResults = append(hoverResults, c4hrs...)
 
-	ccis, chrs, err := getCoreItems()
-	if err != nil {
-		log.Println(err)
-	}
+	ccis, chrs := getCoreItems()
 	completionItems = append(completionItems, ccis...)
 	hoverResults = append(hoverResults, chrs...)
 
