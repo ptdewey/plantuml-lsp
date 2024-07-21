@@ -1,6 +1,7 @@
 package completion
 
 import (
+	"log"
 	"os"
 	"path/filepath"
 	"plantuml_lsp/lsp"
@@ -8,9 +9,9 @@ import (
 )
 
 // TODO: add support for other lsp features (i.e. go to definition)
-func getC4Items(c4dir string) ([]lsp.CompletionItem, []lsp.HoverResult, error) {
+func getC4Items(c4dir string) ([]lsp.CompletionItem, map[string]lsp.HoverResult) {
 	var completionItems []lsp.CompletionItem
-	var hoverResults []lsp.HoverResult
+	hoverResults := make(map[string]lsp.HoverResult)
 
 	err := filepath.WalkDir(c4dir, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
@@ -26,16 +27,19 @@ func getC4Items(c4dir string) ([]lsp.CompletionItem, []lsp.HoverResult, error) {
 			}
 			c4items := parse.ExtractC4Items(string(content))
 			for _, item := range c4items {
-				completionItems = append(completionItems, item.C4ItemToCompletionItem())
-				hoverResults = append(hoverResults, item.C4ItemToHoverResult())
+				// add value if it is not a duplicate
+				if _, ok := hoverResults[item.Name]; !ok {
+					completionItems = append(completionItems, item.C4ItemToCompletionItem())
+					hoverResults[item.Name] = item.C4ItemToHoverResult()
+				}
 			}
 		}
 
 		return nil
 	})
 	if err != nil {
-		return nil, nil, err
+		log.Println(err)
 	}
 
-	return completionItems, hoverResults, nil
+	return completionItems, hoverResults
 }

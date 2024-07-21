@@ -2,7 +2,7 @@
 
 An implementation of the language server protocol (LSP) for PlantUML.
 
-;
+
 ## Installation
 
 TODO: (requires cloning stdlib repo)

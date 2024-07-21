@@ -1,27 +1,27 @@
 package completion
 
 import (
-	"log"
 	"path/filepath"
 	"plantuml_lsp/lsp"
 )
 
 // TODO: finish implementation
-func GetFeatures(stdlibDir string) ([]lsp.CompletionItem, []lsp.HoverResult, error) {
+func GetFeatures(stdlibDir string) ([]lsp.CompletionItem, map[string]lsp.HoverResult) {
 	var completionItems []lsp.CompletionItem
-	var hoverResults []lsp.HoverResult
+	hoverResults := make(map[string]lsp.HoverResult)
+
+	cis, hrs := getCoreItems()
+	completionItems = append(completionItems, cis...)
+	for k, v := range hrs {
+		hoverResults[k] = v
+	}
 
 	// TODO: call each getter function (or each requested)
-	c4cis, c4hrs, err := getC4Items(filepath.Join(stdlibDir, "C4"))
-	if err != nil {
-		log.Println(err)
+	cis, hrs = getC4Items(filepath.Join(stdlibDir, "C4"))
+	completionItems = append(completionItems, cis...)
+	for k, v := range hrs {
+		hoverResults[k] = v
 	}
-	completionItems = append(completionItems, c4cis...)
-	hoverResults = append(hoverResults, c4hrs...)
 
-	ccis, chrs := getCoreItems()
-	completionItems = append(completionItems, ccis...)
-	hoverResults = append(hoverResults, chrs...)
-
-	return completionItems, hoverResults, nil
+	return completionItems, hoverResults
 }

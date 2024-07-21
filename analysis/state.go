@@ -7,7 +7,7 @@ import (
 
 var (
 	completionItems []lsp.CompletionItem
-	hoverResults    []lsp.HoverResult
+	hoverResults    map[string]lsp.HoverResult
 )
 
 type State struct {
@@ -17,20 +17,6 @@ type State struct {
 
 func NewState() State {
 	return State{Documents: map[string]string{}}
-}
-
-// TODO: param options?
-func (s *State) GetFeatures() error {
-	// TODO: don't hardcode directory path
-	c, h, err := completion.GetFeatures("/home/patrick/projects/plantuml-stuff/plantuml-stdlib")
-	// TODO: possibly switch to log.Fatalf instead of return
-	if err != nil {
-		return err
-	}
-
-	completionItems = c
-	hoverResults = h
-	return nil
 }
 
 func (s *State) OpenDocument(uri, text string) []lsp.Diagnostic {
@@ -43,6 +29,12 @@ func (s *State) UpdateDocument(uri, text string) []lsp.Diagnostic {
 	s.Documents[uri] = text
 
 	return getDiagnosticsForFile(text)
+}
+
+// TODO: param options?
+// - pass in std lib directory path
+func (s *State) GetFeatures() {
+	completionItems, hoverResults = completion.GetFeatures("/home/patrick/projects/plantuml-stuff/plantuml-stdlib")
 }
 
 func LineRange(line, start, end int) lsp.Range {

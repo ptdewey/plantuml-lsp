@@ -49,17 +49,12 @@ func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 			request.Params.ClientInfo.Name,
 			request.Params.ClientInfo.Version)
 
-		// hey... let's reply!
 		msg := lsp.NewInitializeResponse(request.ID)
 		writeResponse(writer, msg)
 
+		// fetch language features
 		go func() {
-			// TODO: call item fetcher
-			err := state.GetFeatures()
-			if err != nil {
-				log.Println(err)
-			}
-
+			state.GetFeatures()
 		}()
 
 		logger.Print("Sent the reply")
