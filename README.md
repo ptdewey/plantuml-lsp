@@ -16,10 +16,12 @@ cd plantuml-lsp
 # build lsp binary
 go build
 
-# (optional but reccomended) clone stdlib repo
+# (optional but recommended) clone stdlib repo
 cd ..
 git clone https://github.com/plantuml/plantuml-stdlib.git
 ```
+
+---
 
 ### Setup
 
