@@ -8,8 +8,50 @@ Contributions are welcome, please open an issue or PR if you would like to add s
 
 ## Installation
 
-TODO:
-(for the best experience, this lsp requires cloning stdlib repo)
+```sh
+# clone repository
+git clone https://github.com/ptdewey/plantuml-lsp.git
+cd plantuml-lsp
+
+# build lsp binary
+go build
+
+# (optional but reccomended) clone stdlib repo
+cd ..
+git clone https://github.com/plantuml/plantuml-stdlib.git
+```
+
+### Setup
+
+Neovim (with lspconfig):
+
+```lua
+config = function()
+    local lspconfig = require("lspconfig")
+    local configs = require("lspconfig.configs")
+    if not configs.plantuml_lsp then
+        configs.plantuml_lsp = {
+            default_config = {
+                cmd = { "/path/to/plantuml_lsp", "--stdlib-path=/path/to/plantuml-stdlib" },
+                filetypes = { "plantuml" },
+                root_dir = function(fname)
+                    return lspconfig.util.find_git_ancestor(fname) or lspconfig.util.path.dirname(fname)
+                end,
+                settings = {},
+            }
+        }
+    end
+    lspconfig.plantuml_lsp.setup {}
+end,
+```
+
+* NOTE: This assumes plantuml is set up as a filetype already
+
+---
+
+VS Code:
+
+TODO (I don't use VS Code)
 
 ---
 

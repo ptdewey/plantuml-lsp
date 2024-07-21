@@ -34,7 +34,6 @@ func (s *State) UpdateDocument(uri, text string) []lsp.Diagnostic {
 }
 
 // TODO: param options?
-// - pass in std lib directory path
-func (s *State) GetFeatures() {
-	completionItems, hoverResults = completion.GetFeatures("/home/patrick/projects/plantuml-stuff/plantuml-stdlib")
+func (s *State) GetFeatures(stdlibPath string) {
+	completionItems, hoverResults = completion.GetFeatures(stdlibPath)
 }

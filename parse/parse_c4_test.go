@@ -121,19 +121,3 @@ func TestExtractC4Items(t *testing.T) {
 		})
 	}
 }
-
-// func TestExtractC4ItemsFromFile(t *testing.T) {
-// 	filePath := "/home/patrick/projects/plantuml-stuff/plantuml-stdlib/C4/C4_Container.puml"
-// 	content, err := os.ReadFile(filePath)
-// 	if err != nil {
-// 		log.Fatalf("Error reading file: %v", err)
-// 	}
-//
-// 	c4Items := parse.ExtractC4Items(string(content))
-// 	for _, item := range c4Items {
-// 		fmt.Printf("Name: %s\n", item.Name)
-// 		fmt.Printf("Type: %s\n", item.Type)
-// 		fmt.Printf("Documentation: %s\n", item.Documentation)
-// 		fmt.Printf("Kind: %d\n", item.Kind)
-// 	}
-// }

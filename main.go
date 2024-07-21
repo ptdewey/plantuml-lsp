@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"encoding/json"
-	"fmt"
+	"flag"
 	"io"
 	"log"
 	"os"
@@ -13,8 +13,14 @@ import (
 )
 
 func main() {
-	// TODO: figure out how to link into vim lsp log
-	logger := getLogger("/home/patrick/projects/plantuml-lsp.git/dev/log.txt")
+	// TODO: pass in plantuml_lsp.rc file to use for config stuff
+	// - include log level https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#window_logMessage
+
+	logPath := flag.String("log-path", "", "LSP log path")
+	stdlibPath := flag.String("stdlib-path", "", "PlantUML stdlib path")
+	flag.Parse()
+
+	logger := getLogger(*logPath)
 	logger.Println("Started plantuml-lsp")
 
 	scanner := bufio.NewScanner(os.Stdin)
@@ -23,51 +29,49 @@ func main() {
 	state := analysis.NewState()
 	writer := os.Stdout
 
-	// TODO: break code out into handler/server package
 	for scanner.Scan() {
 		msg := scanner.Bytes()
 		method, contents, err := rpc.DecodeMessage(msg)
 		if err != nil {
-			logger.Println(err)
+			sendLogMessage(writer, "Error decoding message: "+err.Error(), lsp.Error)
 			continue
 		}
 
-		handleMessage(logger, writer, state, method, contents)
+		handleMessage(writer, state, method, contents, *stdlibPath)
 	}
 }
 
-func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, method string, contents []byte) {
-	logger.Printf("Received msg with method: %s", method)
+// FIX: logging to lsp log not working
+func handleMessage(writer io.Writer, state analysis.State, method string, contents []byte, stdlibPath string) {
+	sendLogMessage(writer, "Received msg with method: "+method, lsp.Debug)
 
 	switch method {
 	case "initialize":
 		var request lsp.InitializeRequest
 		if err := json.Unmarshal(contents, &request); err != nil {
-			logger.Printf("Could not parse initialize request: %s", err)
+			sendLogMessage(writer, "Could not parse initialize request: "+err.Error(), lsp.Error)
+			return
 		}
 
-		logger.Printf("Connected to: %s %s",
-			request.Params.ClientInfo.Name,
-			request.Params.ClientInfo.Version)
+		sendLogMessage(writer, "Connected to: "+request.Params.ClientInfo.Name+" "+request.Params.ClientInfo.Version, lsp.Info)
 
 		msg := lsp.NewInitializeResponse(request.ID)
 		writeResponse(writer, msg)
-		logger.Print("Sent the reply")
 
 		go func() {
-			fmt.Println("Fetching language features...")
-			state.GetFeatures()
-			fmt.Println("Language features initialized.")
+			sendLogMessage(writer, "Fetching language features...", lsp.Debug)
+			state.GetFeatures(stdlibPath)
+			sendLogMessage(writer, "Language features initialized.", lsp.Debug)
 		}()
 
 	case "textDocument/didOpen":
 		var request lsp.DidOpenTextDocumentNotification
 		if err := json.Unmarshal(contents, &request); err != nil {
-			logger.Printf("textDocument/didOpen: %s", err)
+			sendLogMessage(writer, "textDocument/didOpen: "+err.Error(), lsp.Error)
 			return
 		}
 
-		logger.Printf("Opened: %s", request.Params.TextDocument.URI)
+		sendLogMessage(writer, "Opened: "+request.Params.TextDocument.URI, lsp.Debug)
 		diagnostics := state.OpenDocument(request.Params.TextDocument.URI, request.Params.TextDocument.Text)
 		writeResponse(writer, lsp.PublishDiagnosticsNotification{
 			Notification: lsp.Notification{
@@ -83,11 +87,11 @@ func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 	case "textDocument/didChange":
 		var request lsp.TextDocumentDidChangeNotification
 		if err := json.Unmarshal(contents, &request); err != nil {
-			logger.Printf("textDocument/didChange: %s", err)
+			sendLogMessage(writer, "textDocument/didChange: "+err.Error(), lsp.Error)
 			return
 		}
 
-		logger.Printf("Changed: %s", request.Params.TextDocument.URI)
+		sendLogMessage(writer, "Changed: "+request.Params.TextDocument.URI, lsp.Debug)
 		for _, change := range request.Params.ContentChanges {
 			diagnostics := state.UpdateDocument(request.Params.TextDocument.URI, change.Text)
 			writeResponse(writer, lsp.PublishDiagnosticsNotification{
@@ -105,7 +109,7 @@ func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 	case "textDocument/hover":
 		var request lsp.HoverRequest
 		if err := json.Unmarshal(contents, &request); err != nil {
-			logger.Printf("textDocument/hover: %s", err)
+			sendLogMessage(writer, "textDocument/hover: "+err.Error(), lsp.Warning)
 			return
 		}
 
@@ -115,7 +119,7 @@ func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 	case "textDocument/definition":
 		var request lsp.DefinitionRequest
 		if err := json.Unmarshal(contents, &request); err != nil {
-			logger.Printf("textDocument/definition: %s", err)
+			sendLogMessage(writer, "textDocument/definition: "+err.Error(), lsp.Warning)
 			return
 		}
 
@@ -125,7 +129,7 @@ func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 	case "textDocument/codeAction":
 		var request lsp.CodeActionRequest
 		if err := json.Unmarshal(contents, &request); err != nil {
-			logger.Printf("textDocument/codeAction: %s", err)
+			sendLogMessage(writer, "textDocument/codeAction: "+err.Error(), lsp.Warning)
 			return
 		}
 
@@ -135,7 +139,7 @@ func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 	case "textDocument/completion":
 		var request lsp.CompletionRequest
 		if err := json.Unmarshal(contents, &request); err != nil {
-			logger.Printf("textDocument/codeAction: %s", err)
+			sendLogMessage(writer, "textDocument/codeAction: "+err.Error(), lsp.Warning)
 			return
 		}
 
@@ -147,13 +151,33 @@ func handleMessage(logger *log.Logger, writer io.Writer, state analysis.State, m
 func writeResponse(writer io.Writer, msg any) {
 	reply, err := rpc.EncodeMessage(msg)
 	if err != nil {
+		sendLogMessage(writer, "Error encoding response: "+err.Error(), lsp.Error)
 		return
 	}
 
 	writer.Write([]byte(reply))
 }
 
+func sendLogMessage(writer io.Writer, message string, level int) {
+	logMessage := lsp.LogMessage{
+		Notification: lsp.Notification{
+			RPC:    "2.0",
+			Method: "window/logMessage",
+		},
+		Params: lsp.LogMessageParams{
+			Type:    level,
+			Message: message,
+		},
+	}
+
+	writeResponse(writer, logMessage)
+}
+
 func getLogger(filename string) *log.Logger {
+	if filename == "" {
+		return log.New(os.Stdout, "[plantuml-lsp]", log.Ldate|log.Ltime|log.Lshortfile)
+	}
+
 	logfile, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0666)
 	if err != nil {
 		panic(err)
