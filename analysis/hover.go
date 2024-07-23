@@ -39,14 +39,18 @@ func getCurrentWord(content string, position lsp.Position) string {
 	line := lines[position.Line]
 
 	start := position.Character
-	for start > 0 {
+	for start > 0 && isValidWordByte(line[start-1]) {
 		start--
 	}
 
 	end := position.Character
-	for end < len(line) {
+	for end < len(line) && isValidWordByte(line[end]) {
 		end++
 	}
 
 	return line[start:end]
+}
+
+func isValidWordByte(b byte) bool {
+	return (b >= 'a' && b <= 'z') || (b >= 'A' && b <= 'Z') || (b >= '0' && b <= '9') || b == '_' || b == '@' || b == '!'
 }
