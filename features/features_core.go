@@ -1,7 +1,6 @@
 package completion
 
 import (
-	"fmt"
 	"plantuml_lsp/language"
 	"plantuml_lsp/lsp"
 )
@@ -23,16 +22,48 @@ func getCoreItems() ([]lsp.CompletionItem, map[string]lsp.HoverResult) {
 
 func definitionToCompletionItem(defs language.LangDefs, completionItems *[]lsp.CompletionItem, hoverResults map[string]lsp.HoverResult) {
 	for _, def := range defs.Defs {
-		doc := fmt.Sprintf("```puml\n%s\n```\n[`plantuml/core`](https://github.com/plantuml/plantuml)", def)
+		doc := "```puml\n" + def + "\n```\n[`plantuml/core`](https://github.com/plantuml/plantuml)"
 		// TODO: currently, @, !, - completions are not being shown initially
 		*completionItems = append(*completionItems, lsp.CompletionItem{
-			Label:         def,
-			Detail:        "", // TODO: Do something with this?
-			Documentation: doc,
-			Kind:          defs.Kind,
+			Label:            def,
+			Detail:           defs.Type,
+			Documentation:    doc,
+			Kind:             defs.Kind,
+			InsertText:       def,
+			InsertTextFormat: 1,
 		})
 		hoverResults[def] = lsp.HoverResult{
 			Contents: doc,
 		}
 	}
+}
+
+func getCoreSnippets() []lsp.CompletionItem {
+	var completionItems = []lsp.CompletionItem{
+		{
+			Label:            "startuml",
+			Detail:           "Insert start/end UML Tags",
+			Documentation:    "",
+			Kind:             15,
+			InsertText:       "@startuml\n\n$0", // TODO: figure out how to make enduml insert at end of file
+			InsertTextFormat: 2,
+			AdditionalTextEdits: []lsp.TextEdit{
+				{
+					Range: lsp.Range{
+						Start: lsp.Position{
+							Line:      999999, // using a long location to avoid needing file length at setup time
+							Character: 0,
+						},
+						End: lsp.Position{
+							Line:      999999,
+							Character: 0,
+						},
+					},
+					NewText: "\n@enduml",
+				},
+			},
+		},
+	}
+
+	return completionItems
 }

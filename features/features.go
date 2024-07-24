@@ -15,13 +15,14 @@ func GetFeatures(stdlibDir string) ([]lsp.CompletionItem, map[string]lsp.HoverRe
 	for k, v := range hrs {
 		hoverResults[k] = v
 	}
+	completionItems = append(completionItems, getCoreSnippets()...)
 
-	// TODO: call each getter function (or each requested)
 	cis, hrs = getC4Items(filepath.Join(stdlibDir, "C4"))
 	completionItems = append(completionItems, cis...)
 	for k, v := range hrs {
 		hoverResults[k] = v
 	}
+	completionItems = append(completionItems, getC4Snippets()...)
 
 	return completionItems, hoverResults
 }

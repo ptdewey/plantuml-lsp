@@ -69,13 +69,13 @@ TODO (I don't use VS Code)
 - [ ] Other stdlib (Todo)
 - [ ] User Defined (Todo)
 
-- [ ] Snippets (Todo)
+- [ ] Snippets (WIP)
     - [ ] Core (Todo)
-    - [ ] stdlib/C4 (Todo)
+    - [x] stdlib/C4
 
 #### Hover
 - [x] Core
-    - [ ] Examples usage (Backlog)
+    - [ ] Example usage (Backlog)
 - [x] stdlib/C4
     - [ ] Example usage (Backlog)
 - [ ] Other stdlib (Backlog)

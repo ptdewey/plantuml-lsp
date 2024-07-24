@@ -1,6 +1,7 @@
 package language
 
 type LangDefs struct {
+	Type string
 	Defs []string
 
 	// CompletionItemKind:
@@ -16,6 +17,7 @@ type LangDefs struct {
 // PlantUML language definitions acquired from 'plantuml -language'
 var (
 	Types = LangDefs{
+		Type: "Type",
 		Defs: []string{
 			"abstract", "action", "actor", "agent", "annotation", "archimate", "artifact",
 			"boundary", "card", "class", "cloud", "collections", "component", "control",
@@ -28,6 +30,7 @@ var (
 	}
 
 	Keywords = LangDefs{
+		Type: "Keyword",
 		Defs: []string{
 			"@endboard", "@endbpm", "@endchen", "@endchronology", "@endcreole",
 			"@endcute", "@enddef", "@endditaa", "@enddot", "@endebnf", "@endfiles",
@@ -60,6 +63,7 @@ var (
 	}
 
 	Preprocessors = LangDefs{
+		Type: "Preprocessor",
 		Defs: []string{
 			"!assert", "!define", "!definelong", "!dump_memory", "!else",
 			"!enddefinelong", "!endfunction", "!endif", "!endprocedure", "!endsub",
@@ -71,6 +75,7 @@ var (
 	}
 
 	Arrows = LangDefs{
+		Type: "Arrow",
 		Defs: []string{
 			"--", "..", "-->", "<--", "--*", "*--", "--o", "o--", "<|--", "--|>",
 			"..|>", "<|..", "*-->", "<--*", "o-->", "<--o", ".", "->", "<-", "-*",
@@ -84,6 +89,7 @@ var (
 	}
 
 	Skinparameters = LangDefs{
+		Type: "Skinparam",
 		Defs: []string{
 			"ActivityBackgroundColor", "ActivityBorderColor",
 			"ActivityBorderThickness", "ActivityDiamondFontColor",
@@ -278,6 +284,7 @@ var (
 	}
 
 	Colors = LangDefs{
+		Type: "Color",
 		Defs: []string{
 			"APPLICATION", "AliceBlue", "AntiqueWhite", "Aqua", "Aquamarine",
 			"Azure", "BUSINESS", "Beige", "Bisque", "Black", "BlanchedAlmond",

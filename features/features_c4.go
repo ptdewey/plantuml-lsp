@@ -43,3 +43,46 @@ func getC4Items(c4dir string) ([]lsp.CompletionItem, map[string]lsp.HoverResult)
 
 	return completionItems, hoverResults
 }
+
+// TODO: param to decide link vs path vs builtin include path
+func getC4Snippets() []lsp.CompletionItem {
+	var completionItems = []lsp.CompletionItem{}
+
+	// TODO:
+	// - possibly pull theme definitions from stdlib local location? (depending on passed opts)
+	// - pull includes from stdlib local location as well
+
+	// theme snippets
+	themePath := "https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/themes"
+	themes := []string{
+		"C4_blue", "C4_brown", "C4_green", "C4_sandstone", "C4_superhero", "C4_united", "C4_violet",
+	}
+	for _, t := range themes {
+		completionItems = append(completionItems, lsp.CompletionItem{
+			Label:            t,
+			Detail:           "Theme",
+			Documentation:    "Invoke theme `" + t + "`",
+			Kind:             15,
+			InsertText:       "!theme " + t + " from " + themePath,
+			InsertTextFormat: 2,
+		})
+	}
+
+	// include snippets
+	includePath := "https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/"
+	includes := []string{
+		"C4_Component", "C4_Container", "C4_Context", "C4_Deployment", "C4_Dynamic", "C4_Sequence",
+	}
+	for _, i := range includes {
+		completionItems = append(completionItems, lsp.CompletionItem{
+			Label:            i,
+			Detail:           "Theme",
+			Documentation:    "Include `C4/" + i + "`",
+			Kind:             15,
+			InsertText:       "!include " + includePath + i + ".puml", // TODO: this would have to change to allow local/builtin include
+			InsertTextFormat: 2,
+		})
+	}
+
+	return completionItems
+}

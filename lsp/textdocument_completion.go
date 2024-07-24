@@ -1,5 +1,11 @@
 package lsp
 
+const (
+	// InsertTextFormat
+	PlainText    = 1 // primary text is inserted as plain text string
+	FormatSnippe = 2 // primary text being inserted is treated as snippet
+)
+
 type CompletionRequest struct {
 	Request
 	Params CompletionParams `json:"params"`
@@ -15,16 +21,16 @@ type CompletionResponse struct {
 }
 
 type CompletionItem struct {
-	Label         string `json:"label"`
-	Detail        string `json:"detail"`
-	Documentation string `json:"documentation"`
-	Kind          int    `json:"kind"` // TODO: potentially change this to completionitemkind
-
-	// TODO: insertText for insert import at top of file
+	Label               string     `json:"label"`
+	Detail              string     `json:"detail"`
+	Documentation       string     `json:"documentation"`
+	Kind                int        `json:"kind"` // TODO: potentially change this to completionitemkind (convenience)
+	InsertText          string     `json:"insertText"`
+	InsertTextFormat    int        `json:"insertTextFormat"`
+	AdditionalTextEdits []TextEdit `json:"additionalTextEdits"`
 }
 
-// TODO: CompletionItemKind type
-// - would allow more than just "Text" in completions
+// CompletionItemKind type
 // /**
 //   - The kind of a completion entry.
 //     */

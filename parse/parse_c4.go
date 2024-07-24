@@ -1,7 +1,6 @@
 package parse
 
 import (
-	"fmt"
 	"plantuml_lsp/lsp"
 	"regexp"
 	"strings"
@@ -69,7 +68,7 @@ func formatDocs(name string, params string) string {
 	// TODO: update documentation with core vs stdlib/lib to make things more clear
 
 	// def := fmt.Sprintf("```puml\n%s(%s)\n```", name, params)
-	def := fmt.Sprintf("```rust\n%s(%s)\n```", name, params) // NOTE: use this for somewhat working syntax highlights since plantuml doesn't have a parser for most editors
+	def := "```rust\n" + name + "(" + params + ")\n```" // NOTE: use this for somewhat working syntax highlights since plantuml doesn't have a parser for most editors
 
 	if params == "" {
 		return def
@@ -84,23 +83,26 @@ func formatDocs(name string, params string) string {
 			name := strings.TrimSpace(parts[0])
 			defaultValue := strings.TrimSpace(parts[1])
 			if defaultValue == `""` {
-				out = append(out, fmt.Sprintf("`%s` (optional)", name))
+				out = append(out, "`"+name+"` (optional)")
 			} else {
-				out = append(out, fmt.Sprintf("`%s` (optional, default: `%s`)", name, defaultValue))
+				out = append(out, "`"+name+"` (optional, default: `"+defaultValue+"`)")
 			}
 		} else {
-			out = append(out, fmt.Sprintf("`%s` (required)", param))
+			out = append(out, "`"+param+"` (required)")
 		}
 	}
-	return fmt.Sprintf("%s\nParameters: %s\n\n[`stdlib/C4`](https://github.com/plantuml/plantuml-stdlib/tree/master/C4)", def, strings.Join(out, ", "))
+	return def + "\nParameters: " + strings.Join(out, ", ") +
+		"\n\n[`stdlib/C4`](https://github.com/plantuml/plantuml-stdlib/tree/master/C4)"
 }
 
 func (i C4Item) C4ItemToCompletionItem() lsp.CompletionItem {
 	return lsp.CompletionItem{
-		Label:         i.Name,
-		Detail:        i.Type,
-		Documentation: i.Documentation,
-		Kind:          i.Kind,
+		Label:            i.Name,
+		Detail:           i.Type,
+		Documentation:    i.Documentation,
+		Kind:             i.Kind,
+		InsertText:       i.Name + "($0)", // TODO: possibly add params as extra snippet locations
+		InsertTextFormat: 2,
 	}
 }
 
