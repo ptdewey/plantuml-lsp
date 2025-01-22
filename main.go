@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"plantuml_lsp/analysis"
@@ -17,10 +18,18 @@ func main() {
 
 	logPath := flag.String("log-path", "", "LSP log path")
 	stdlibPath := flag.String("stdlib-path", "", "PlantUML stdlib path")
+	jarPath := flag.String("jar-path", "", "PlantUML jar path")
 	flag.Parse()
 
 	logger := getLogger(*logPath)
 	logger.Println("Started plantuml-lsp")
+
+	if len(*jarPath) != 0 {
+		if _, err := os.Stat(*jarPath); err != nil {
+			logger.Println(fmt.Sprintf("Error during 'os.Stat(*jarPath)' for *jarPath: '%s'", *jarPath))
+			panic(err)
+		}
+	}
 
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Split(rpc.Split)
@@ -36,7 +45,7 @@ func main() {
 			continue
 		}
 
-		handler.HandleMessage(writer, state, method, contents, *stdlibPath)
+		handler.HandleMessage(writer, state, method, contents, *stdlibPath, *jarPath)
 	}
 }
 

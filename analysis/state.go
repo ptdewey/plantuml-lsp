@@ -21,16 +21,16 @@ func NewState() State {
 	return State{Documents: map[string]string{}}
 }
 
-func (s *State) OpenDocument(uri, text string) []lsp.Diagnostic {
+func (s *State) OpenDocument(uri, text string, jarPath string) []lsp.Diagnostic {
 	s.Documents[uri] = text
 
-	return getDiagnosticsForFile(text)
+	return getDiagnosticsForFile(text, jarPath)
 }
 
-func (s *State) UpdateDocument(uri, text string) []lsp.Diagnostic {
+func (s *State) UpdateDocument(uri, text string, jarPath string) []lsp.Diagnostic {
 	s.Documents[uri] = text
 
-	return getDiagnosticsForFile(text)
+	return getDiagnosticsForFile(text, jarPath)
 }
 
 // TODO: param options?

@@ -36,7 +36,11 @@ config = function()
     if not configs.plantuml_lsp then
         configs.plantuml_lsp = {
             default_config = {
-                cmd = { "/path/to/plantuml_lsp", "--stdlib-path=/path/to/plantuml-stdlib" },
+                cmd = {
+                    "/path/to/plantuml_lsp",
+                    "--stdlib-path=/path/to/plantuml-stdlib",
+                    "--jar-path=/path/to/plantuml-jar",
+                },
                 filetypes = { "plantuml" },
                 root_dir = function(fname)
                     return lspconfig.util.find_git_ancestor(fname) or lspconfig.util.path.dirname(fname)
@@ -50,6 +54,7 @@ end,
 ```
 
 * NOTE: This assumes plantuml is set up as a filetype already
+* NOTE: cmd flag `--jar-path` is used to derive diagnostics. The flag can optionally be omitted
 
 ---
 
@@ -90,9 +95,10 @@ TODO (I don't use VS Code)
 - [ ] User Defined (Backlog)
 
 #### Diagnostics
-- [ ] Core (Backlog)
-- [ ] stdlib/C4 (Backlog)
-- [ ] Other stdlib (Backlog)
+- Diagnostics currently depend on `Plant UML jar -syntax` output
+- [x] Core
+- [x] stdlib/C4
+- [x] Other stdlib
 - [ ] User Defined (Backlog)
 
 #### Other Language Server Features
