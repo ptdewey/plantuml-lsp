@@ -39,7 +39,9 @@ config = function()
                 cmd = {
                     "/path/to/plantuml_lsp",
                     "--stdlib-path=/path/to/plantuml-stdlib",
-                    "--jar-path=/path/to/plantuml-jar",
+                    "--exec-path='java -jar /path/to/plantuml.jar'",
+                    -- With plantuml executable and available from your PATH there is a simpler method:
+                    -- "--exec-path=plantuml"
                 },
                 filetypes = { "plantuml" },
                 root_dir = function(fname)
@@ -54,7 +56,9 @@ end,
 ```
 
 * NOTE: This assumes plantuml is set up as a filetype already
-* NOTE: cmd flag `--jar-path` is used to derive diagnostics. The flag can optionally be omitted
+* NOTE: cmd flag `--exec-path` is used to derive diagnostics. The flag can optionally be omitted
+    * This argument allows for use of plantuml via a Jar or a system visible binary.
+
 
 ---
 
@@ -95,7 +99,7 @@ TODO (I don't use VS Code)
 - [ ] User Defined (Backlog)
 
 #### Diagnostics
-- Diagnostics currently depend on `Plant UML jar -syntax` output
+- Diagnostics currently depend on `plantuml -syntax` output
 - [x] Core
 - [x] stdlib/C4
 - [x] Other stdlib

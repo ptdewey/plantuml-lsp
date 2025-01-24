@@ -9,7 +9,7 @@ import (
 )
 
 // FIX: logging to lsp log not working
-func HandleMessage(writer io.Writer, state analysis.State, method string, contents []byte, stdlibPath string, jarPath string) {
+func HandleMessage(writer io.Writer, state analysis.State, method string, contents []byte, stdlibPath string, execPath []string) {
 	SendLogMessage(writer, "Received msg with method: "+method, lsp.Debug)
 
 	switch method {
@@ -39,7 +39,7 @@ func HandleMessage(writer io.Writer, state analysis.State, method string, conten
 		}
 
 		SendLogMessage(writer, "Opened: "+request.Params.TextDocument.URI, lsp.Debug)
-		diagnostics := state.OpenDocument(request.Params.TextDocument.URI, request.Params.TextDocument.Text, jarPath)
+		diagnostics := state.OpenDocument(request.Params.TextDocument.URI, request.Params.TextDocument.Text, execPath)
 		writeResponse(writer, lsp.PublishDiagnosticsNotification{
 			Notification: lsp.Notification{
 				RPC:    "2.0",
@@ -60,7 +60,7 @@ func HandleMessage(writer io.Writer, state analysis.State, method string, conten
 
 		SendLogMessage(writer, "Changed: "+request.Params.TextDocument.URI, lsp.Debug)
 		for _, change := range request.Params.ContentChanges {
-			diagnostics := state.UpdateDocument(request.Params.TextDocument.URI, change.Text, jarPath)
+			diagnostics := state.UpdateDocument(request.Params.TextDocument.URI, change.Text, execPath)
 			writeResponse(writer, lsp.PublishDiagnosticsNotification{
 				Notification: lsp.Notification{
 					RPC:    "2.0",

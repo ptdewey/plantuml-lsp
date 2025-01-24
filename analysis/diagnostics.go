@@ -8,17 +8,18 @@ import (
 	"strings"
 )
 
-func getDiagnosticsForFile(text string, plantUmlJarPath string) []lsp.Diagnostic {
-	if len(plantUmlJarPath) == 0 {
+func getDiagnosticsForFile(text string, plantUmlExecPath []string) []lsp.Diagnostic {
+	if len(plantUmlExecPath) == 0 {
 		return []lsp.Diagnostic{}
 	}
-	plantUmlDiagnostics := getPlantUmlDiagnostics(text, plantUmlJarPath)
+	plantUmlDiagnostics := getPlantUmlDiagnostics(text, plantUmlExecPath)
 	splitText := strings.Split(text, "\n")
 	return parsePlantUmlDiagnostics(plantUmlDiagnostics, splitText)
 }
 
-func getPlantUmlDiagnostics(text string, plantUmlJarPath string) string {
-	plantumlCmd := exec.Command("java", "-jar", plantUmlJarPath, "-syntax")
+func getPlantUmlDiagnostics(text string, plantUmlExecPath []string) string {
+	plantUmlExecPath = append(plantUmlExecPath, "-syntax")
+	plantumlCmd := exec.Command(plantUmlExecPath[0], plantUmlExecPath[1:]...)
 	plantumlCmd.Stdin = bytes.NewReader([]byte(text))
 	output, _ := plantumlCmd.CombinedOutput()
 	return string(output)

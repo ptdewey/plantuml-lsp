@@ -1,7 +1,7 @@
 package analysis
 
 import (
-	"plantuml_lsp/features"
+	completion "plantuml_lsp/features"
 	"plantuml_lsp/lsp"
 )
 
@@ -21,16 +21,16 @@ func NewState() State {
 	return State{Documents: map[string]string{}}
 }
 
-func (s *State) OpenDocument(uri, text string, jarPath string) []lsp.Diagnostic {
+func (s *State) OpenDocument(uri, text string, execPath []string) []lsp.Diagnostic {
 	s.Documents[uri] = text
 
-	return getDiagnosticsForFile(text, jarPath)
+	return getDiagnosticsForFile(text, execPath)
 }
 
-func (s *State) UpdateDocument(uri, text string, jarPath string) []lsp.Diagnostic {
+func (s *State) UpdateDocument(uri, text string, execPath []string) []lsp.Diagnostic {
 	s.Documents[uri] = text
 
-	return getDiagnosticsForFile(text, jarPath)
+	return getDiagnosticsForFile(text, execPath)
 }
 
 // TODO: param options?
