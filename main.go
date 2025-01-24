@@ -20,30 +20,25 @@ func main() {
 	logPath := flag.String("log-path", "", "LSP log path")
 	stdlibPath := flag.String("stdlib-path", "", "PlantUML stdlib path")
 	execCmd := flag.String("exec-path", "", "PlantUML executable command")
+	jarPath := flag.String("jar-path", "", "PlantUML jar path")
 	flag.Parse()
 
 	logger := getLogger(*logPath)
 	logger.Println("Started plantuml-lsp")
 
-	var execCmdSplit []string
+	var plantumlCmd []string
 	if len(*execCmd) > 0 {
-		execCmdSplit = strings.Split(*execCmd, " ")
-		if len(execCmdSplit) > 1 {
-			n := len(execCmdSplit) - 1
-			execPath := strings.TrimSuffix(execCmdSplit[n], "'")
-			if _, err := os.Stat(execPath); err != nil {
-				panic(fmt.Sprintf("Error checking executable path: '%s', Error: %v", execPath, err))
-			}
-			execCmdSplit[0] = strings.TrimPrefix(execCmdSplit[0], "'")
-			execCmdSplit[n] = execPath
-		} else {
-			execPath := execCmdSplit[0]
-			if strings.HasPrefix(execPath, "/") {
-				if _, err := os.Stat(execPath); err != nil {
-					panic(fmt.Sprintf("Error checking executable path: '%s', Error: %v", execPath, err))
-				}
+		if strings.HasPrefix(*execCmd, "/") {
+			if _, err := os.Stat(*execCmd); err != nil {
+				panic(fmt.Sprintf("Error checking executable path: '%s', Error: %v", *execCmd, err))
 			}
 		}
+		plantumlCmd = []string{*execCmd}
+	} else if len(*jarPath) > 0 {
+		if _, err := os.Stat(*jarPath); err != nil {
+			panic(fmt.Sprintf("Error checking executable path: '%s', Error: %v", *jarPath, err))
+		}
+		plantumlCmd = []string{"java", "-jar", *jarPath}
 	}
 
 	scanner := bufio.NewScanner(os.Stdin)
@@ -60,7 +55,7 @@ func main() {
 			continue
 		}
 
-		handler.HandleMessage(writer, state, method, contents, *stdlibPath, execCmdSplit)
+		handler.HandleMessage(writer, state, method, contents, *stdlibPath, plantumlCmd)
 	}
 }
 

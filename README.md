@@ -39,9 +39,14 @@ config = function()
                 cmd = {
                     "/path/to/plantuml_lsp",
                     "--stdlib-path=/path/to/plantuml-stdlib",
-                    "--exec-path='java -jar /path/to/plantuml.jar'",
+
+                    --
+                    -- FOR DIAGNOSTICS (choose up to one of 'jar-path' and 'exec-path' flags):
+                    --
+                    -- Running plantuml via a .jar file:
+                    "--jar-path=/path/to/plantuml.jar",
                     -- With plantuml executable and available from your PATH there is a simpler method:
-                    -- "--exec-path=plantuml"
+                    "--exec-path=plantuml",
                 },
                 filetypes = { "plantuml" },
                 root_dir = function(fname)
@@ -56,8 +61,9 @@ end,
 ```
 
 * NOTE: This assumes plantuml is set up as a filetype already
-* NOTE: cmd flag `--exec-path` is used to derive diagnostics. The flag can optionally be omitted
+* NOTE: cmd flags `--exec-path` and `--jar-path` are used to derive diagnostics. These flags can optionally be omitted
     * This argument allows for use of plantuml via a Jar or a system visible binary.
+    * Only one of these flags should be specified at a given time.
 
 
 ---
