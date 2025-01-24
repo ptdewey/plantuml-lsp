@@ -36,7 +36,13 @@ config = function()
     if not configs.plantuml_lsp then
         configs.plantuml_lsp = {
             default_config = {
-                cmd = { "/path/to/plantuml_lsp", "--stdlib-path=/path/to/plantuml-stdlib" },
+                cmd = {
+                    "/path/to/plantuml_lsp",
+                    "--stdlib-path=/path/to/plantuml-stdlib",
+                    "--exec-path='java -jar /path/to/plantuml.jar'",
+                    -- With plantuml executable and available from your PATH there is a simpler method:
+                    -- "--exec-path=plantuml"
+                },
                 filetypes = { "plantuml" },
                 root_dir = function(fname)
                     return lspconfig.util.find_git_ancestor(fname) or lspconfig.util.path.dirname(fname)
@@ -50,6 +56,9 @@ end,
 ```
 
 * NOTE: This assumes plantuml is set up as a filetype already
+* NOTE: cmd flag `--exec-path` is used to derive diagnostics. The flag can optionally be omitted
+    * This argument allows for use of plantuml via a Jar or a system visible binary.
+
 
 ---
 
@@ -90,9 +99,10 @@ TODO (I don't use VS Code)
 - [ ] User Defined (Backlog)
 
 #### Diagnostics
-- [ ] Core (Backlog)
-- [ ] stdlib/C4 (Backlog)
-- [ ] Other stdlib (Backlog)
+- Diagnostics currently depend on `plantuml -syntax` output
+- [x] Core
+- [x] stdlib/C4
+- [x] Other stdlib
 - [ ] User Defined (Backlog)
 
 #### Other Language Server Features

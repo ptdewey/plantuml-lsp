@@ -3,12 +3,14 @@ package main
 import (
 	"bufio"
 	"flag"
+	"fmt"
 	"log"
 	"os"
 	"plantuml_lsp/analysis"
 	"plantuml_lsp/handler"
 	"plantuml_lsp/lsp"
 	"plantuml_lsp/rpc"
+	"strings"
 )
 
 func main() {
@@ -17,10 +19,32 @@ func main() {
 
 	logPath := flag.String("log-path", "", "LSP log path")
 	stdlibPath := flag.String("stdlib-path", "", "PlantUML stdlib path")
+	execCmd := flag.String("exec-path", "", "PlantUML executable command")
 	flag.Parse()
 
 	logger := getLogger(*logPath)
 	logger.Println("Started plantuml-lsp")
+
+	var execCmdSplit []string
+	if len(*execCmd) > 0 {
+		execCmdSplit = strings.Split(*execCmd, " ")
+		if len(execCmdSplit) > 1 {
+			n := len(execCmdSplit) - 1
+			execPath := strings.TrimSuffix(execCmdSplit[n], "'")
+			if _, err := os.Stat(execPath); err != nil {
+				panic(fmt.Sprintf("Error checking executable path: '%s', Error: %v", execPath, err))
+			}
+			execCmdSplit[0] = strings.TrimPrefix(execCmdSplit[0], "'")
+			execCmdSplit[n] = execPath
+		} else {
+			execPath := execCmdSplit[0]
+			if strings.HasPrefix(execPath, "/") {
+				if _, err := os.Stat(execPath); err != nil {
+					panic(fmt.Sprintf("Error checking executable path: '%s', Error: %v", execPath, err))
+				}
+			}
+		}
+	}
 
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Split(rpc.Split)
@@ -36,7 +60,7 @@ func main() {
 			continue
 		}
 
-		handler.HandleMessage(writer, state, method, contents, *stdlibPath)
+		handler.HandleMessage(writer, state, method, contents, *stdlibPath, execCmdSplit)
 	}
 }
 
