@@ -1,9 +1,10 @@
 package parse
 
 import (
-	"plantuml_lsp/lsp"
 	"regexp"
 	"strings"
+
+	"github.com/ptdewey/plantuml-lsp/internal/lsp"
 )
 
 type C4Item struct {

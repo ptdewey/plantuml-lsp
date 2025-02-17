@@ -1,8 +1,8 @@
 package completion
 
 import (
-	"plantuml_lsp/language"
-	"plantuml_lsp/lsp"
+	"github.com/ptdewey/plantuml-lsp/internal/language"
+	"github.com/ptdewey/plantuml-lsp/internal/lsp"
 )
 
 // TODO: param options to not include certain definitions (i.e. skinparams?)

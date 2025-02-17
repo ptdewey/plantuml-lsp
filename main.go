@@ -6,11 +6,12 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"plantuml_lsp/analysis"
-	"plantuml_lsp/handler"
-	"plantuml_lsp/lsp"
-	"plantuml_lsp/rpc"
 	"strings"
+
+	"github.com/ptdewey/plantuml-lsp/internal/analysis"
+	"github.com/ptdewey/plantuml-lsp/internal/handler"
+	"github.com/ptdewey/plantuml-lsp/internal/lsp"
+	"github.com/ptdewey/plantuml-lsp/internal/rpc"
 )
 
 func main() {

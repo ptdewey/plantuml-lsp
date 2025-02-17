@@ -1,6 +1,6 @@
 package analysis
 
-import "plantuml_lsp/lsp"
+import "github.com/ptdewey/plantuml-lsp/internal/lsp"
 
 func (s *State) Definition(id int, uri string, position lsp.Position) lsp.DefinitionResponse {
 	document := s.Documents[uri]

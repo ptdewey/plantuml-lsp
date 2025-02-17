@@ -2,11 +2,20 @@
 
 An implementation of the language server protocol (LSP) for PlantUML.
 
-**Disclaimer: This project is very early in devlopment, so many features will be missing.**
+**Disclaimer: This project is early in development, so features may be missing.**
 Contributions are welcome, please open an issue or PR if you would like to add something.
 
 
 ## Installation
+
+With Go Install
+
+```sh
+go install github.com/ptdewey/plantuml-lsp
+```
+
+
+From Source:
 
 ```sh
 # clone repository
@@ -17,6 +26,9 @@ cd plantuml-lsp
 go build
 cd ..
 
+
+Stdlib Setup
+```sh
 # (optional but recommended) clone stdlib repo
 git clone https://github.com/plantuml/plantuml-stdlib.git
 # or alternatively, extract stdlib from plantuml executable
@@ -37,7 +49,7 @@ config = function()
         configs.plantuml_lsp = {
             default_config = {
                 cmd = {
-                    "/path/to/plantuml_lsp",
+                    "/path/to/plantuml-lsp",
                     "--stdlib-path=/path/to/plantuml-stdlib",
 
                     --
@@ -70,7 +82,7 @@ end,
 
 VS Code:
 
-TODO (I don't use VS Code)
+TODO: VSCode extension (help wanted)
 
 ---
 

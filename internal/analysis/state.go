@@ -1,8 +1,8 @@
 package analysis
 
 import (
-	completion "plantuml_lsp/features"
-	"plantuml_lsp/lsp"
+	completion "github.com/ptdewey/plantuml-lsp/internal/features"
+	"github.com/ptdewey/plantuml-lsp/internal/lsp"
 )
 
 // TODO: should these be moved to State?
@@ -30,6 +30,8 @@ func (s *State) OpenDocument(uri, text string, execPath []string) []lsp.Diagnost
 func (s *State) UpdateDocument(uri, text string, execPath []string) []lsp.Diagnostic {
 	s.Documents[uri] = text
 
+	// PERF: wait timer before running syntax checker -- possibly use channels?
+	// - this slows down completion when typing (can also be ignored by calling UpdateDocument in a separate goroutine)
 	return getDiagnosticsForFile(text, execPath)
 }
 

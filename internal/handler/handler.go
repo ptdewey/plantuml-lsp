@@ -3,9 +3,10 @@ package handler
 import (
 	"encoding/json"
 	"io"
-	"plantuml_lsp/analysis"
-	"plantuml_lsp/lsp"
-	"plantuml_lsp/rpc"
+
+	"github.com/ptdewey/plantuml-lsp/internal/analysis"
+	"github.com/ptdewey/plantuml-lsp/internal/lsp"
+	"github.com/ptdewey/plantuml-lsp/internal/rpc"
 )
 
 // FIX: logging to lsp log not working
@@ -59,19 +60,23 @@ func HandleMessage(writer io.Writer, state analysis.State, method string, conten
 		}
 
 		SendLogMessage(writer, "Changed: "+request.Params.TextDocument.URI, lsp.Debug)
-		for _, change := range request.Params.ContentChanges {
-			diagnostics := state.UpdateDocument(request.Params.TextDocument.URI, change.Text, execPath)
-			writeResponse(writer, lsp.PublishDiagnosticsNotification{
-				Notification: lsp.Notification{
-					RPC:    "2.0",
-					Method: "textDocument/publishDiagnostics",
-				},
-				Params: lsp.PublishDiagnosticsParams{
-					URI:         request.Params.TextDocument.URI,
-					Diagnostics: diagnostics,
-				},
-			})
-		}
+
+		// Goroutine here may be band-aid fix for diagnostics performance
+		go func() {
+			for _, change := range request.Params.ContentChanges {
+				diagnostics := state.UpdateDocument(request.Params.TextDocument.URI, change.Text, execPath)
+				writeResponse(writer, lsp.PublishDiagnosticsNotification{
+					Notification: lsp.Notification{
+						RPC:    "2.0",
+						Method: "textDocument/publishDiagnostics",
+					},
+					Params: lsp.PublishDiagnosticsParams{
+						URI:         request.Params.TextDocument.URI,
+						Diagnostics: diagnostics,
+					},
+				})
+			}
+		}()
 
 	case "textDocument/hover":
 		var request lsp.HoverRequest

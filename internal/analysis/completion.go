@@ -1,6 +1,6 @@
 package analysis
 
-import "plantuml_lsp/lsp"
+import "github.com/ptdewey/plantuml-lsp/internal/lsp"
 
 func (s *State) TextDocumentCompletion(id int, uri string) lsp.CompletionResponse {
 	response := lsp.CompletionResponse{

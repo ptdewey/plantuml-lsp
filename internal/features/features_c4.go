@@ -4,8 +4,9 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"plantuml_lsp/lsp"
-	"plantuml_lsp/parse"
+
+	"github.com/ptdewey/plantuml-lsp/internal/lsp"
+	"github.com/ptdewey/plantuml-lsp/internal/parse"
 )
 
 // TODO: add support for other lsp features (i.e. go to definition)

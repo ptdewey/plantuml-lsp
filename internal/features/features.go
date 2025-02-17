@@ -3,7 +3,8 @@ package completion
 import (
 	"os"
 	"path/filepath"
-	"plantuml_lsp/lsp"
+
+	"github.com/ptdewey/plantuml-lsp/internal/lsp"
 )
 
 // TODO: finish implementation

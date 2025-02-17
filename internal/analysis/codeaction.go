@@ -1,8 +1,9 @@
 package analysis
 
 import (
-	"plantuml_lsp/lsp"
 	"strings"
+
+	"github.com/ptdewey/plantuml-lsp/internal/lsp"
 )
 
 func (s *State) TextDocumentCodeAction(id int, uri string) lsp.TextDocumentCodeActionResponse {

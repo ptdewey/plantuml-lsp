@@ -3,9 +3,10 @@ package analysis
 import (
 	"bytes"
 	"os/exec"
-	"plantuml_lsp/lsp"
 	"strconv"
 	"strings"
+
+	"github.com/ptdewey/plantuml-lsp/internal/lsp"
 )
 
 func getDiagnosticsForFile(text string, plantUmlExecPath []string) []lsp.Diagnostic {
@@ -33,7 +34,7 @@ func parsePlantUmlDiagnostics(plantUmlDiagnostics string, text []string) []lsp.D
 
 	lineNumber, err := strconv.Atoi(diagnosticsStrings[1])
 	if err != nil {
-		//TODO: propagate diagnostics parse failure to logger(s)
+		// TODO: propagate diagnostics parse failure to logger(s)
 		return []lsp.Diagnostic{}
 	}
 
