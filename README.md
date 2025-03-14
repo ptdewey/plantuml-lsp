@@ -25,9 +25,9 @@ cd plantuml-lsp
 # build lsp binary
 go build
 cd ..
+```
 
-
-Stdlib Setup
+Plantuml stdlib Setup
 ```sh
 # (optional but recommended) clone stdlib repo
 git clone https://github.com/plantuml/plantuml-stdlib.git
@@ -121,7 +121,7 @@ TODO: VSCode extension (help wanted)
 - [x] Core
 - [x] stdlib/C4
 - [x] Other stdlib
-- [ ] User Defined (Backlog)
+- [x] User Defined
 
 #### Other Language Server Features
 Other language server features are not currently planned.
