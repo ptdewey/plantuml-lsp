@@ -3,7 +3,7 @@
   "displayName": "PlantUML Language Server",
   "description": "Language server for PlantUML.",
   "author": "Patrick Dewey",
-  "publisher": "Patrick Dewey",
+  "publisher": "ptdewey",
   "license": "MIT",
   "version": "0.4.0",
   "categories": ["Programming Languages", "Language Servers", "Snippets", "Other"],
@@ -22,13 +22,31 @@
   ],
   "main": "./client/out/extension",
   "contributes": {
-    "configuration": {}
+    "configuration": {
+      "properties": {
+        "plantuml-lsp.stdlibPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to PlantUML stdlib directory."
+        },
+        "plantuml-lsp.execPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to PlantUML binary. (Mutually exclusive with jarPath)"
+        },
+        "plantuml-lsp.jarPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to PlantUML jar. (Mutually exclusive with execPath)"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -b",
     "watch": "tsc -b -w",
-    "postinstall": "cd client && npm install && cd ../ && go build"
+    "postinstall": "cd client && npm install && cd ../../../ && go build -o ./editors/code/plantuml-lsp"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",

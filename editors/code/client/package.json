@@ -1,11 +1,10 @@
 {
   "name": "plantuml-lsp",
-  "displayName": "PlantUML Language Server",
-  "description": "Language server for PlantUML.",
+  "displayName": "PlantUML Language Server Client",
+  "description": "Language server client for PlantUML.",
   "author": "Patrick Dewey",
   "license": "MIT",
   "version": "0.4.0",
-  "publisher": "Patrick Dewey",
   "repository": {
     "type": "git",
     "url": "https://github.com/ptdewey/plantuml-lsp"

@@ -1,4 +1,3 @@
-import * as path from "path";
 import { workspace, ExtensionContext } from "vscode";
 
 import {
@@ -11,15 +10,28 @@ import {
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
+  const config = workspace.getConfiguration("plantuml-lsp");
+  // Read user-defined settings
+  const stdlibPath = config.get<string>("stdlibPath", "");
+  const execPath = config.get<string>("execPath", "");
+  const jarPath = config.get<string>("jarPath", "");
+
+  // Build the CLI arguments based on user settings
+  let args: string[] = [];
+  if (stdlibPath) args.push("--stdlib-path", stdlibPath);
+  if (execPath) args.push("--exec-path", execPath);
+  if (jarPath) args.push("--jar-path", jarPath);
+
   const serverModule = context.asAbsolutePath("plantuml-lsp");
 
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
   const serverOptions: ServerOptions = {
-    run: { module: serverModule, transport: TransportKind.ipc },
+    run: { command: serverModule, transport: TransportKind.stdio, args: args },
     debug: {
-      module: serverModule,
-      transport: TransportKind.ipc,
+      command: serverModule,
+      transport: TransportKind.stdio,
+      args: args,
     },
   };
 
