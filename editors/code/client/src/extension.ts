@@ -10,6 +10,15 @@ import {
 let client: LanguageClient;
 
 export function activate(context: ExtensionContext) {
+  const platform = process.platform;
+
+  let binaryName = "plantuml-lsp";
+  if (platform === "win32") {
+    binaryName += ".exe";
+  } else if (platform === "darwin") {
+    binaryName += "-darwin";
+  }
+
   const config = workspace.getConfiguration("plantuml-lsp");
   // Read user-defined settings
   const stdlibPath = config.get<string>("stdlibPath", "");
@@ -22,7 +31,7 @@ export function activate(context: ExtensionContext) {
   if (execPath) args.push("--exec-path", execPath);
   if (jarPath) args.push("--jar-path", jarPath);
 
-  const serverModule = context.asAbsolutePath("plantuml-lsp");
+  const serverModule = context.asAbsolutePath(binaryName);
 
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used

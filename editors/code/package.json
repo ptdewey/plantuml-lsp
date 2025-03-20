@@ -6,7 +6,7 @@
   "publisher": "ptdewey",
   "license": "MIT",
   "version": "0.4.0",
-  "categories": ["Programming Languages", "Language Servers", "Snippets", "Other"],
+  "categories": ["Programming Languages", "Snippets", "Other"],
   "repository": {
     "type": "git",
     "url": "https://github.com/ptdewey/plantuml-lsp"
@@ -42,11 +42,19 @@
       }
     }
   },
+  "files": [
+    ".vscode",
+    "client/**/*",
+    "LICENSE",
+    "plantuml-lsp",
+    "plantuml-lsp-darwin",
+    "plantuml-lsp.exe"
+  ],
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -b",
     "watch": "tsc -b -w",
-    "postinstall": "cd client && npm install && cd ../../../ && go build -o ./editors/code/plantuml-lsp"
+    "postinstall": "cd client && npm install && cd ../../../ && GOOS=linux GOARCH=amd64 go build -o editors/code/plantuml-lsp && GOOS=darwin GOARCH=amd64 go build -o editors/code/plantuml-lsp-darwin && GOOS=windows GOARCH=amd64 go build -o editors/code/plantuml-lsp.exe"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",

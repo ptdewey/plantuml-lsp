@@ -1,5 +1,8 @@
 plantuml-lsp
+plantuml-lsp-darwin
+plantuml-lsp.exe
 log.txt
+temp.puml
 
 out
 node_modules
