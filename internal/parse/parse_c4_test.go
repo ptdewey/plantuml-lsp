@@ -4,7 +4,7 @@ import (
 	// "fmt"
 	// "log"
 	// "os"
-	"plantuml_lsp/parse"
+	"github.com/ptdewey/plantuml-lsp/internal/parse"
 	"reflect"
 	"testing"
 )
