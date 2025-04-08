@@ -1,7 +1,7 @@
 package rpc_test
 
 import (
-	"plantuml_lsp/rpc"
+	"github.com/ptdewey/plantuml-lsp/internal/rpc"
 	"testing"
 )
 
