@@ -18,13 +18,14 @@ func main() {
 	// TODO: pass in plantuml_lsp.rc file to use for config stuff
 	// - include log level https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#window_logMessage
 
+	useStdio := flag.Bool("stdio", false, "")
 	logPath := flag.String("log-path", "", "LSP log path")
 	stdlibPath := flag.String("stdlib-path", "", "PlantUML stdlib path")
 	execCmd := flag.String("exec-path", "", "PlantUML executable command")
 	jarPath := flag.String("jar-path", "", "PlantUML jar path")
 	flag.Parse()
 
-	logger := getLogger(*logPath)
+	logger := getLogger(*useStdio, *logPath)
 	logger.Println("Started plantuml-lsp")
 
 	var plantumlCmd []string
@@ -60,7 +61,11 @@ func main() {
 	}
 }
 
-func getLogger(filename string) *log.Logger {
+func getLogger(useStdio bool, filename string) *log.Logger {
+	if useStdio {
+		return log.New(os.Stderr, "[plantuml-lsp]", log.Ldate|log.Ltime|log.Lshortfile)
+	}
+
 	if filename == "" {
 		return log.New(os.Stdout, "[plantuml-lsp]", log.Ldate|log.Ltime|log.Lshortfile)
 	}
