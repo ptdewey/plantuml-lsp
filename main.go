@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"log"
 	"os"
 	"strings"
 
@@ -18,14 +17,10 @@ func main() {
 	// TODO: pass in plantuml_lsp.rc file to use for config stuff
 	// - include log level https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#window_logMessage
 
-	logPath := flag.String("log-path", "", "LSP log path")
 	stdlibPath := flag.String("stdlib-path", "", "PlantUML stdlib path")
 	execCmd := flag.String("exec-path", "", "PlantUML executable command")
 	jarPath := flag.String("jar-path", "", "PlantUML jar path")
 	flag.Parse()
-
-	logger := getLogger(*logPath)
-	logger.Println("Started plantuml-lsp")
 
 	var plantumlCmd []string
 	if len(*execCmd) > 0 {
@@ -48,6 +43,8 @@ func main() {
 	state := analysis.NewState()
 	writer := os.Stdout
 
+	handler.SendLogMessage(writer, "Started plantuml-lsp", lsp.Debug)
+
 	for scanner.Scan() {
 		msg := scanner.Bytes()
 		method, contents, err := rpc.DecodeMessage(msg)
@@ -58,17 +55,4 @@ func main() {
 
 		handler.HandleMessage(writer, state, method, contents, *stdlibPath, plantumlCmd)
 	}
-}
-
-func getLogger(filename string) *log.Logger {
-	if filename == "" {
-		return log.New(os.Stdout, "[plantuml-lsp]", log.Ldate|log.Ltime|log.Lshortfile)
-	}
-
-	logfile, err := os.OpenFile(filename, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0666)
-	if err != nil {
-		panic(err)
-	}
-
-	return log.New(logfile, "[plantuml-lsp]", log.Ldate|log.Ltime|log.Lshortfile)
 }
