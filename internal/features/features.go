@@ -32,5 +32,7 @@ func GetFeatures(stdlibDir string) ([]lsp.CompletionItem, map[string]lsp.HoverRe
 	}
 	completionItems = append(completionItems, getC4Snippets()...)
 
+	// TODO: Add other stdlib completions (available as toggleable features defined in server configuration)
+
 	return completionItems, hoverResults
 }

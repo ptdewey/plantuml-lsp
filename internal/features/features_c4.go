@@ -53,6 +53,9 @@ func getC4Snippets() []lsp.CompletionItem {
 	// - possibly pull theme definitions from stdlib local location? (depending on passed opts)
 	// - pull includes from stdlib local location as well
 
+	// FIX: Replace previously typed text on completion trigger.
+	// - Current behavior fills in from cursor position to end of line, doesn't remove any previously typed text
+
 	// theme snippets
 	themePath := "https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/themes"
 	themes := []string{

@@ -2,8 +2,8 @@ package lsp
 
 const (
 	// InsertTextFormat
-	PlainText    = 1 // primary text is inserted as plain text string
-	FormatSnippe = 2 // primary text being inserted is treated as snippet
+	PlainText     = 1 // primary text is inserted as plain text string
+	FormatSnippet = 2 // primary text being inserted is treated as snippet
 )
 
 type CompletionRequest struct {
