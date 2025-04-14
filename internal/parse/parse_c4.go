@@ -17,6 +17,9 @@ type C4Item struct {
 	// Module = 9; Property = 10; Unit = 11; Value = 12; Enum = 13; Keyword = 14; Snippet = 15; Color = 16; File = 17;
 	// Reference = 18; Folder = 19; EnumMember = 20; Constant = 21; Struct = 22; Event = 23; Operator = 24; TypeParameter = 25;
 	Kind int
+
+	LineNumber int
+	SourceFile string
 }
 
 // text should be full text of a puml file containing c4 model definitions
@@ -27,7 +30,7 @@ func ExtractC4Items(text string) []C4Item {
 
 	procRe := regexp.MustCompile(`^\s*!(unquoted\s+)?procedure\s+(\w+)\((.*)\)`)
 
-	for _, line := range strings.Split(text, "\n") {
+	for i, line := range strings.Split(text, "\n") {
 		// end of documentation block
 		if strings.HasPrefix(line, "' ##") {
 			currType = strings.Join(typeBuf, "\n")
@@ -40,13 +43,13 @@ func ExtractC4Items(text string) []C4Item {
 			typeBuf = append(typeBuf, strings.TrimSpace(strings.TrimPrefix(line, "'")))
 		} else if strings.HasPrefix(line, "!") {
 			// handle procedure definitions
-			// TODO: store locations for goto definition later
 			if procMatch := procRe.FindStringSubmatch(line); procMatch != nil {
 				out = append(out, C4Item{
 					Name:          procMatch[2],
 					Type:          currType,
 					Documentation: formatDocs(procMatch[2], procMatch[3]),
 					Kind:          3, // NOTE: choose between method (2) and function(3)
+					LineNumber:    i,
 				})
 			}
 			// TODO: plantuml functions and definitions and other things
@@ -110,5 +113,21 @@ func (i C4Item) C4ItemToCompletionItem() lsp.CompletionItem {
 func (i C4Item) C4ItemToHoverResult() lsp.HoverResult {
 	return lsp.HoverResult{
 		Contents: i.Documentation,
+	}
+}
+
+func (i C4Item) C4ItemToLocation() lsp.Location {
+	return lsp.Location{
+		URI: "file://" + i.SourceFile,
+		Range: lsp.Range{
+			Start: lsp.Position{
+				Line:      i.LineNumber,
+				Character: 0,
+			},
+			End: lsp.Position{
+				Line:      i.LineNumber,
+				Character: 0,
+			},
+		},
 	}
 }

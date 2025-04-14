@@ -112,7 +112,7 @@ TODO: VSCode extension (help wanted)
 
 #### Definition
 - [ ] Core (Might be impossible with plantuml project structure)
-- [ ] stdlib/C4 (Todo)
+- [x] stdlib/C4
 - [ ] Other stdlib (Backlog)
 - [ ] User Defined (Backlog)
 

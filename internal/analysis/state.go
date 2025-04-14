@@ -10,6 +10,7 @@ import (
 var (
 	completionItems []lsp.CompletionItem
 	hoverResults    map[string]lsp.HoverResult
+	definitions     map[string]lsp.Location
 )
 
 type State struct {
@@ -37,5 +38,5 @@ func (s *State) UpdateDocument(uri, text string, execPath []string) []lsp.Diagno
 
 // TODO: param options?
 func (s *State) GetFeatures(stdlibPath string) {
-	completionItems, hoverResults = completion.GetFeatures(stdlibPath)
+	completionItems, hoverResults, definitions = completion.GetFeatures(stdlibPath)
 }

@@ -10,17 +10,16 @@ import (
 )
 
 // TODO: add support for other lsp features (i.e. go to definition)
-func getC4Items(c4dir string) ([]lsp.CompletionItem, map[string]lsp.HoverResult) {
+func getC4Items(c4dir string) ([]lsp.CompletionItem, map[string]lsp.HoverResult, map[string]lsp.Location) {
 	var completionItems []lsp.CompletionItem
 	hoverResults := make(map[string]lsp.HoverResult)
+	definitions := make(map[string]lsp.Location)
 
 	err := filepath.WalkDir(c4dir, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 
-		// TODO: don't add duplicate definitions (defined in multiple files)
-		// - probably use a map to check
 		if !d.IsDir() && filepath.Ext(d.Name()) == ".puml" {
 			content, err := os.ReadFile(path)
 			if err != nil {
@@ -30,8 +29,11 @@ func getC4Items(c4dir string) ([]lsp.CompletionItem, map[string]lsp.HoverResult)
 			for _, item := range c4items {
 				// add value if it is not a duplicate
 				if _, exists := hoverResults[item.Name]; !exists {
+					item.SourceFile = path
+
 					completionItems = append(completionItems, item.C4ItemToCompletionItem())
 					hoverResults[item.Name] = item.C4ItemToHoverResult()
+					definitions[item.Name] = item.C4ItemToLocation()
 				}
 			}
 		}
@@ -42,7 +44,7 @@ func getC4Items(c4dir string) ([]lsp.CompletionItem, map[string]lsp.HoverResult)
 		log.Println(err)
 	}
 
-	return completionItems, hoverResults
+	return completionItems, hoverResults, definitions
 }
 
 // TODO: param to decide link vs path vs builtin include path
