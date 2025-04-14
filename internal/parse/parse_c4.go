@@ -118,7 +118,7 @@ func (i C4Item) C4ItemToHoverResult() lsp.HoverResult {
 
 func (i C4Item) C4ItemToLocation() lsp.Location {
 	return lsp.Location{
-		URI: "file://" + i.SourceFile,
+		URI: "file:///" + i.SourceFile,
 		Range: lsp.Range{
 			Start: lsp.Position{
 				Line:      i.LineNumber,
