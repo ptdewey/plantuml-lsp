@@ -4,9 +4,11 @@ import (
 	// "fmt"
 	// "log"
 	// "os"
-	"plantuml_lsp/parse"
 	"reflect"
 	"testing"
+
+	"github.com/ptdewey/plantuml-lsp/internal/lsp"
+	"github.com/ptdewey/plantuml-lsp/internal/parse"
 )
 
 func TestExtractC4Items(t *testing.T) {
@@ -111,6 +113,40 @@ func TestExtractC4Items(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "mixed comments, procedures, and non-comments",
+			text: `
+' Docs for non-comment line.
+hide footbox
+' This is a procedure.
+' ##################
+!procedure ExampleProc(param1, param2 = "default")
+`,
+			want: []parse.C4Item{
+				{
+					Name:          "ExampleProc",
+					Type:          "This is a procedure.",
+					Documentation: "```rust\nExampleProc(param1, param2 = \"default\")\n```\nParameters: `param1` (required), `param2` (optional, default: `\"default\"`)\n\n[`stdlib/C4`](https://github.com/plantuml/plantuml-stdlib/tree/master/C4)",
+					Kind:          3,
+				},
+			},
+		},
+		{
+			name: "no parameters",
+			text: `
+' This is a procedure.
+' ##################
+!procedure ExampleProc()
+`,
+			want: []parse.C4Item{
+				{
+					Name:          "ExampleProc",
+					Type:          "This is a procedure.",
+					Documentation: "```rust\nExampleProc()\n```",
+					Kind:          3,
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -119,5 +155,44 @@ func TestExtractC4Items(t *testing.T) {
 				t.Errorf("ExtractC4Items() = got:\n %v\n want:\n %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestC4ItemToCompletionItem(t *testing.T) {
+	item := parse.C4Item{
+		Name:          "ExampleProc",
+		Type:          "This is a procedure.",
+		Documentation: "```rust\nExampleProc(param1, param2 = \"default\")\n```\nParameters: `param1` (required), `param2` (optional, default: `\"default\"`)\n\n[`stdlib/C4`](https://github.com/plantuml/plantuml-stdlib/tree/master/C4)",
+		Kind:          3,
+	}
+	want := lsp.CompletionItem{
+		Label:            "ExampleProc",
+		Detail:           "This is a procedure.",
+		Documentation:    "```rust\nExampleProc(param1, param2 = \"default\")\n```\nParameters: `param1` (required), `param2` (optional, default: `\"default\"`)\n\n[`stdlib/C4`](https://github.com/plantuml/plantuml-stdlib/tree/master/C4)",
+		Kind:             3,
+		InsertText:       "ExampleProc($0)",
+		InsertTextFormat: 2,
+	}
+	got := item.C4ItemToCompletionItem()
+
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("Unexpected result from C4ItemToCompletionItem()\n\tgot:  %v\n\twant: %v", got, want)
+	}
+}
+
+func TestC4ItemToHoverResult(t *testing.T) {
+	item := parse.C4Item{
+		Name:          "ExampleProc",
+		Type:          "This is a procedure.",
+		Documentation: "```rust\nExampleProc(param1, param2 = \"default\")\n```\nParameters: `param1` (required), `param2` (optional, default: `\"default\"`)\n\n[`stdlib/C4`](https://github.com/plantuml/plantuml-stdlib/tree/master/C4)",
+		Kind:          3,
+	}
+	want := lsp.HoverResult{
+		Contents: "```rust\nExampleProc(param1, param2 = \"default\")\n```\nParameters: `param1` (required), `param2` (optional, default: `\"default\"`)\n\n[`stdlib/C4`](https://github.com/plantuml/plantuml-stdlib/tree/master/C4)",
+	}
+	got := item.C4ItemToHoverResult()
+
+	if !reflect.DeepEqual(got, want) {
+		t.Errorf("Unexpected result from C4ItemToHoverResult()\n\tgot:  %v\n\twant: %v", got, want)
 	}
 }

@@ -14,6 +14,8 @@ func getCoreItems() ([]lsp.CompletionItem, map[string]lsp.HoverResult) {
 	definitionToCompletionItem(language.Keywords, &completionItems, hoverResults)
 	definitionToCompletionItem(language.Preprocessors, &completionItems, hoverResults)
 	definitionToCompletionItem(language.Arrows, &completionItems, hoverResults)
+	definitionToCompletionItem(language.Colors, &completionItems, hoverResults)
+	definitionToCompletionItem(language.Skinparameters, &completionItems, hoverResults)
 
 	// TODO: colors and skinparams (probably make optional)
 

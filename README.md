@@ -11,7 +11,7 @@ Contributions are welcome, please open an issue or PR if you would like to add s
 With Go Install
 
 ```sh
-go install github.com/ptdewey/plantuml-lsp
+go install github.com/ptdewey/plantuml-lsp@latest
 ```
 
 
@@ -91,7 +91,7 @@ VS Code:
 #### Completion:
 - [x] Core (WIP)
     - [x] Types, keywords, directives
-    - [ ] Colors, skinparams (Figuring out if these should be included)
+    - [x] Colors, skinparams
 - [ ] stdlib/C4 (WIP)
     - [x] Procedures
     - [ ] Functions, globals, defines, constants, variables (Todo)
@@ -112,7 +112,7 @@ VS Code:
 
 #### Definition
 - [ ] Core (Might be impossible with plantuml project structure)
-- [ ] stdlib/C4 (Todo)
+- [x] stdlib/C4
 - [ ] Other stdlib (Backlog)
 - [ ] User Defined (Backlog)
 
