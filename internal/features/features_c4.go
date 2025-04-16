@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/ptdewey/plantuml-lsp/internal/lsp"
-	"github.com/ptdewey/plantuml-lsp/internal/parse"
+	"github.com/ptdewey/plantuml-lsp/internal/parse/stdlib"
 )
 
 // TODO: add support for other lsp features (i.e. go to definition)
@@ -15,6 +15,8 @@ func getC4Items(c4dir string) ([]lsp.CompletionItem, map[string]lsp.HoverResult,
 	hoverResults := make(map[string]lsp.HoverResult)
 	definitions := make(map[string]lsp.Location)
 
+	// TODO: move dir walking to parse/stdlib package
+	// this function should only set create the feature related items
 	err := filepath.WalkDir(c4dir, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -25,7 +27,7 @@ func getC4Items(c4dir string) ([]lsp.CompletionItem, map[string]lsp.HoverResult,
 			if err != nil {
 				return err
 			}
-			c4items := parse.ExtractC4Items(string(content))
+			c4items := stdlib.ExtractC4Items(string(content))
 			for _, item := range c4items {
 				// add value if it is not a duplicate
 				if _, exists := hoverResults[item.Name]; !exists {

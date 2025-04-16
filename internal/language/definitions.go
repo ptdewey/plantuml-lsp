@@ -1,17 +1,11 @@
 package language
 
+import "github.com/ptdewey/plantuml-lsp/internal/lsp"
+
 type LangDefs struct {
 	Type string
 	Defs []string
-
-	// CompletionItemKind:
-	// Text = 1; Method = 2; Function = 3; Constructor = 4; Field = 5; Variable
-	// = 6; Class = 7; Interface = 8;
-	// Module = 9; Property = 10; Unit = 11; Value = 12; Enum = 13;
-	// Keyword = 14; Snippet = 15; Color = 16; File = 17;
-	// Reference = 18; Folder = 19; EnumMember = 20; Constant = 21;
-	// Struct = 22; Event = 23; Operator = 24; TypeParameter = 25;
-	Kind int
+	Kind lsp.CompletionItemKind
 }
 
 // PlantUML language definitions acquired from 'plantuml -language'
@@ -26,7 +20,7 @@ var (
 			"object", "package", "participant", "person", "process", "protocol", "queue",
 			"rectangle", "relationship", "stack", "state", "storage", "struct", "usecase",
 		},
-		Kind: 7,
+		Kind: lsp.Class,
 	}
 
 	Keywords = LangDefs{
@@ -59,7 +53,7 @@ var (
 			"stop", "style", "then", "title", "together", "top",
 			"top to bottom direction", "true", "up", "while",
 		},
-		Kind: 14,
+		Kind: lsp.Keyword,
 	}
 
 	Preprocessors = LangDefs{
@@ -71,7 +65,7 @@ var (
 			"!local", "!log", "!pragma", "!procedure", "!return", "!startsub",
 			"!theme", "!undef", "!unquoted",
 		},
-		Kind: 14,
+		Kind: lsp.Keyword,
 	}
 
 	Arrows = LangDefs{
@@ -85,7 +79,7 @@ var (
 			"--d->", "--u->", "--l->", "--r->", "..d..>", "..u..>", "..l..>",
 			"..r..>",
 		},
-		Kind: 24,
+		Kind: lsp.Operator,
 	}
 
 	Skinparameters = LangDefs{
@@ -280,7 +274,7 @@ var (
 			"UsecaseStereotypeFontName", "UsecaseStereotypeFontSize",
 			"UsecaseStereotypeFontStyle", "WrapWidth",
 		},
-		Kind: 10,
+		Kind: lsp.Property,
 	}
 
 	Colors = LangDefs{
@@ -318,6 +312,6 @@ var (
 			"Turquoise", "Violet", "Wheat", "White", "WhiteSmoke", "Yellow",
 			"YellowGreen",
 		},
-		Kind: 16,
+		Kind: lsp.Color,
 	}
 )
