@@ -102,7 +102,7 @@ Sublime Text (with [LSP](https://github.com/sublimelsp/LSP/) and [PlantUmlDiagra
 
 VS Code:
 
-TODO: VSCode extension (help wanted)
+[VSCode Extension](https://marketplace.visualstudio.com/items?itemName=ptdewey.plantuml-lsp)
 
 ---
 
