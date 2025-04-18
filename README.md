@@ -96,7 +96,7 @@ Sublime Text (with [LSP](https://github.com/sublimelsp/LSP/) and [PlantUmlDiagra
 }
 ```
 
-* NOTE: Similar to NeoVim setup, flags `--exec-path` and `--jar-path` could be used as well.
+* NOTE: Similar to Neovim and VSCode setup, flags `--exec-path` and `--jar-path` can be specified as well.
 
 ---
 
