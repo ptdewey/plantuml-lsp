@@ -24,8 +24,9 @@ type CompletionItem struct {
 	Label               string             `json:"label"`
 	Detail              string             `json:"detail"`
 	Documentation       string             `json:"documentation"`
-	Kind                CompletionItemKind `json:"kind"` // TODO: potentially change this to completionitemkind (convenience)
+	Kind                CompletionItemKind `json:"kind"`
 	InsertText          string             `json:"insertText"`
+	TextEdit            *TextEdit          `json:"textEdit"`
 	InsertTextFormat    int                `json:"insertTextFormat"`
 	AdditionalTextEdits []TextEdit         `json:"additionalTextEdits"`
 }

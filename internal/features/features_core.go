@@ -47,13 +47,25 @@ func getCoreSnippets() []lsp.CompletionItem {
 			Detail:           "Insert start/end UML Tags",
 			Documentation:    "",
 			Kind:             15,
-			InsertText:       "@startuml\n\n$0", // TODO: figure out how to make enduml insert at end of file
 			InsertTextFormat: 2,
 			AdditionalTextEdits: []lsp.TextEdit{
 				{
 					Range: lsp.Range{
 						Start: lsp.Position{
-							Line:      999999, // using a long location to avoid needing file length at setup time
+							Line:      0,
+							Character: 0,
+						},
+						End: lsp.Position{
+							Line:      0,
+							Character: 0,
+						},
+					},
+					NewText: "@startuml\n",
+				},
+				{
+					Range: lsp.Range{
+						Start: lsp.Position{
+							Line:      999999,
 							Character: 0,
 						},
 						End: lsp.Position{

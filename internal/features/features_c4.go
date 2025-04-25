@@ -59,6 +59,7 @@ func getC4Snippets() []lsp.CompletionItem {
 
 	// FIX: Replace previously typed text on completion trigger.
 	// - Current behavior fills in from cursor position to end of line, doesn't remove any previously typed text
+	// - Use "https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#insertReplaceEdit"
 
 	// theme snippets
 	themePath := "https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/themes"
