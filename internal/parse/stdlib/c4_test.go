@@ -1,21 +1,18 @@
-package parse_test
+package stdlib_test
 
 import (
-	// "fmt"
-	// "log"
-	// "os"
 	"reflect"
 	"testing"
 
 	"github.com/ptdewey/plantuml-lsp/internal/lsp"
-	"github.com/ptdewey/plantuml-lsp/internal/parse"
+	"github.com/ptdewey/plantuml-lsp/internal/parse/stdlib"
 )
 
 func TestExtractC4Items(t *testing.T) {
 	tests := []struct {
 		name string
 		text string
-		want []parse.C4Item
+		want []stdlib.C4Item
 	}{
 		{
 			name: "single procedure with documentation",
@@ -24,7 +21,7 @@ func TestExtractC4Items(t *testing.T) {
 ' ##################
 !procedure ExampleProc(param1, param2 = "default")
 `,
-			want: []parse.C4Item{
+			want: []stdlib.C4Item{
 				{
 					Name:          "ExampleProc",
 					Type:          "This is a procedure.",
@@ -42,7 +39,7 @@ func TestExtractC4Items(t *testing.T) {
 ' ##################
 !procedure ExampleProcWithEmptyDefault(param1, param2 = "")
 `,
-			want: []parse.C4Item{
+			want: []stdlib.C4Item{
 				{
 					Name:          "ExampleProcWithEmptyDefault",
 					Type:          "This is a procedure with empty default.",
@@ -62,7 +59,7 @@ func TestExtractC4Items(t *testing.T) {
 !procedure FirstProc(param1)
 !procedure SecondProc(param2 = 42)
 `,
-			want: []parse.C4Item{
+			want: []stdlib.C4Item{
 				{
 					Name:          "FirstProc",
 					Type:          "This is the first procedure.\nThis is the second procedure.",
@@ -86,7 +83,7 @@ func TestExtractC4Items(t *testing.T) {
 			text: `
 !procedure NoDocsProc(param1, param2)
 `,
-			want: []parse.C4Item{
+			want: []stdlib.C4Item{
 				{
 					Name:          "NoDocsProc",
 					Type:          "",
@@ -108,7 +105,7 @@ func TestExtractC4Items(t *testing.T) {
 ' ## Block 2
 !procedure SecondProc(param2 = 42)
 `,
-			want: []parse.C4Item{
+			want: []stdlib.C4Item{
 				{
 					Name:          "FirstProc",
 					Type:          "Docs for FirstProc.",
@@ -136,7 +133,7 @@ hide footbox
 ' ##################
 !procedure ExampleProc(param1, param2 = "default")
 `,
-			want: []parse.C4Item{
+			want: []stdlib.C4Item{
 				{
 					Name:          "ExampleProc",
 					Type:          "This is a procedure.",
@@ -154,7 +151,7 @@ hide footbox
 ' ##################
 !procedure ExampleProc()
 `,
-			want: []parse.C4Item{
+			want: []stdlib.C4Item{
 				{
 					Name:          "ExampleProc",
 					Type:          "This is a procedure.",
@@ -169,7 +166,7 @@ hide footbox
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := parse.ExtractC4Items(tt.text); !reflect.DeepEqual(got, tt.want) {
+			if got := stdlib.ExtractC4Items(tt.text); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ExtractC4Items() = got:\n %v\n want:\n %v", got, tt.want)
 			}
 		})
@@ -177,7 +174,7 @@ hide footbox
 }
 
 func TestC4ItemToCompletionItem(t *testing.T) {
-	item := parse.C4Item{
+	item := stdlib.C4Item{
 		Name:          "ExampleProc",
 		Type:          "This is a procedure.",
 		Documentation: "```rust\nExampleProc(param1, param2 = \"default\")\n```\nParameters: `param1` (required), `param2` (optional, default: `\"default\"`)\n\n[`stdlib/C4`](https://github.com/plantuml/plantuml-stdlib/tree/master/C4)",
@@ -201,7 +198,7 @@ func TestC4ItemToCompletionItem(t *testing.T) {
 }
 
 func TestC4ItemToHoverResult(t *testing.T) {
-	item := parse.C4Item{
+	item := stdlib.C4Item{
 		Name:          "ExampleProc",
 		Type:          "This is a procedure.",
 		Documentation: "```rust\nExampleProc(param1, param2 = \"default\")\n```\nParameters: `param1` (required), `param2` (optional, default: `\"default\"`)\n\n[`stdlib/C4`](https://github.com/plantuml/plantuml-stdlib/tree/master/C4)",

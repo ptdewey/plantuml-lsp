@@ -77,6 +77,26 @@ end,
     * This argument allows for use of plantuml via a Jar or a system visible binary.
     * Only one of these flags should be specified at a given time.
 
+---
+
+Sublime Text (with [LSP](https://github.com/sublimelsp/LSP/) and [PlantUmlDiagrams](https://github.com/evandrocoan/PlantUmlDiagrams/) packages):
+
+```json
+{
+  "clients": {
+    "plantuml-lsp": {
+      "enabled": true,
+      "command": [
+        "/path/to/plantuml-lsp",
+        "--stdlib-path=/path/to/plantuml-stdlib"
+      ],
+      "selector": "source.puml | source.wsd"
+    }
+  }
+}
+```
+
+* NOTE: Similar to Neovim and VSCode setup, flags `--exec-path` and `--jar-path` can be specified as well.
 
 ---
 

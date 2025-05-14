@@ -1,4 +1,4 @@
-package parse
+package stdlib
 
 import (
 	"regexp"
@@ -11,15 +11,9 @@ type C4Item struct {
 	Name          string
 	Type          string
 	Documentation string
-
-	// CompletionItemKind:
-	// Text = 1; Method = 2; Function = 3; Constructor = 4; Field = 5; Variable = 6; Class = 7; Interface = 8;
-	// Module = 9; Property = 10; Unit = 11; Value = 12; Enum = 13; Keyword = 14; Snippet = 15; Color = 16; File = 17;
-	// Reference = 18; Folder = 19; EnumMember = 20; Constant = 21; Struct = 22; Event = 23; Operator = 24; TypeParameter = 25;
-	Kind int
-
-	LineNumber int
-	SourceFile string
+	Kind          lsp.CompletionItemKind
+	LineNumber    int
+	SourceFile    string
 }
 
 // text should be full text of a puml file containing c4 model definitions
@@ -118,7 +112,7 @@ func (i C4Item) C4ItemToHoverResult() lsp.HoverResult {
 
 func (i C4Item) C4ItemToLocation() lsp.Location {
 	return lsp.Location{
-		URI: "file://" + i.SourceFile,
+		URI: "file:///" + i.SourceFile,
 		Range: lsp.Range{
 			Start: lsp.Position{
 				Line:      i.LineNumber,
