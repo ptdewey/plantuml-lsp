@@ -71,9 +71,9 @@ func getC4Snippets() []lsp.CompletionItem {
 			Label:            t,
 			Detail:           "Theme",
 			Documentation:    "Invoke theme `" + t + "`",
-			Kind:             15,
+			Kind:             lsp.Snippet,
 			InsertText:       "!theme " + t + " from " + themePath,
-			InsertTextFormat: 2,
+			InsertTextFormat: lsp.FormatSnippet,
 		})
 	}
 
@@ -87,9 +87,9 @@ func getC4Snippets() []lsp.CompletionItem {
 			Label:            i,
 			Detail:           "Theme",
 			Documentation:    "Include `C4/" + i + "`",
-			Kind:             15,
+			Kind:             lsp.Snippet,
 			InsertText:       "!include " + includePath + i + ".puml", // TODO: this would have to change to allow local/builtin include
-			InsertTextFormat: 2,
+			InsertTextFormat: lsp.FormatSnippet,
 		})
 	}
 

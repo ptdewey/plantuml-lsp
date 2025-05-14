@@ -1,11 +1,5 @@
 package lsp
 
-const (
-	// InsertTextFormat
-	PlainText     = 1 // primary text is inserted as plain text string
-	FormatSnippet = 2 // primary text being inserted is treated as snippet
-)
-
 type CompletionRequest struct {
 	Request
 	Params CompletionParams `json:"params"`
@@ -20,6 +14,14 @@ type CompletionResponse struct {
 	Result []CompletionItem `json:"result"`
 }
 
+type InsertTextFormat int
+
+const (
+	_ InsertTextFormat = iota
+	PlainText
+	FormatSnippet
+)
+
 type CompletionItem struct {
 	Label               string             `json:"label"`
 	Detail              string             `json:"detail"`
@@ -27,7 +29,7 @@ type CompletionItem struct {
 	Kind                CompletionItemKind `json:"kind"`
 	InsertText          string             `json:"insertText"`
 	TextEdit            *TextEdit          `json:"textEdit"`
-	InsertTextFormat    int                `json:"insertTextFormat"`
+	InsertTextFormat    InsertTextFormat   `json:"insertTextFormat"`
 	AdditionalTextEdits []TextEdit         `json:"additionalTextEdits"`
 }
 
