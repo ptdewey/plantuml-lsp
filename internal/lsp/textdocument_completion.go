@@ -11,7 +11,7 @@ type CompletionParams struct {
 
 type CompletionResponse struct {
 	Response
-	Result []CompletionItem `json:"result"`
+	Result CompletionList `json:"result"`
 }
 
 type InsertTextFormat int
@@ -65,3 +65,9 @@ const (
 	TypeParameter
 	Unknown
 )
+
+type CompletionList struct {
+	IsIncomplete bool `json:"isIncomplete"`
+	// TODO: ItemDefaults *ItemDefaults `json:"itemDefaults"`
+	Items []CompletionItem `json:"items"`
+}

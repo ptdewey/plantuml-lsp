@@ -11,7 +11,7 @@ import (
 	"github.com/ptdewey/plantuml-lsp/internal/utils/debounce"
 )
 
-var debounceDelay time.Duration = 500 * time.Millisecond
+var debounceDelay time.Duration = 1000 * time.Millisecond
 
 func HandleMessage(writer io.Writer, state analysis.State, method string, contents []byte, stdlibPath string, execPath []string) {
 	logger.SendLogMessage(writer, "Received msg with method: "+method, lsp.Debug)
