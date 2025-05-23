@@ -18,6 +18,8 @@ import (
 func main() {
 	// TODO: pass in plantuml_lsp.rc file to use for config stuff
 	// - include log level https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#window_logMessage
+	_ = flag.Bool("stdio", true, "Deprecated.")
+
 	stdlibPath := flag.String("stdlib-path", "", "PlantUML stdlib path")
 	execCmd := flag.String("exec-path", "", "PlantUML executable command")
 	jarPath := flag.String("jar-path", "", "PlantUML jar path")
