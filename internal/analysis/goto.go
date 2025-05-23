@@ -1,12 +1,14 @@
 package analysis
 
-import "github.com/ptdewey/plantuml-lsp/internal/lsp"
+import (
+	"github.com/ptdewey/plantuml-lsp/internal/lsp"
+)
 
 func (s *State) Definition(id int, uri string, position lsp.Position) lsp.DefinitionResponse {
 	document := s.Documents[uri]
 
 	currWord := getCurrentWord(document, position)
-	location, exists := definitions[currWord] // TODO: go to definition
+	location, exists := definitions[currWord]
 
 	if !exists {
 		return lsp.DefinitionResponse{

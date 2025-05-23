@@ -44,19 +44,22 @@ func getCoreSnippets() []lsp.CompletionItem {
 			Detail:        "Insert start/end UML Tags",
 			Documentation: "",
 			Kind:          lsp.Snippet,
-			TextEdit: &lsp.TextEdit{
-				NewText: "@startuml\n",
-				Range: lsp.Range{
-					Start: lsp.Position{
-						Line:      0,
-						Character: 0,
-					},
-					End: lsp.Position{
-						Line:      0,
-						Character: 7,
-					},
-				},
-			},
+			// REFACTOR: determine optimal snippet behavior for startuml
+			// - behaves differently in vscode with InsertText
+			InsertText: "@startuml\n",
+			// TextEdit: &lsp.TextEdit{
+			// 	NewText: "@startuml\n",
+			// 	Range: lsp.Range{
+			// 		Start: lsp.Position{
+			// 			Line:      0,
+			// 			Character: 0,
+			// 		},
+			// 		End: lsp.Position{
+			// 			Line:      0,
+			// 			Character: 7,
+			// 		},
+			// 	},
+			// },
 			InsertTextFormat: lsp.PlainText,
 			AdditionalTextEdits: []lsp.TextEdit{
 				{

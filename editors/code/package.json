@@ -54,7 +54,8 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -b",
     "watch": "tsc -b -w",
-    "postinstall": "cd client && npm install && cd ../../../ && GOOS=linux GOARCH=amd64 go build -o editors/code/plantuml-lsp && GOOS=darwin GOARCH=amd64 go build -o editors/code/plantuml-lsp-darwin && GOOS=windows GOARCH=amd64 go build -o editors/code/plantuml-lsp.exe"
+    "postinstall": "cd client && npm install && cd ../../../ && GOOS=linux GOARCH=amd64 go build -o editors/code/plantuml-lsp && GOOS=darwin GOARCH=amd64 go build -o editors/code/plantuml-lsp-darwin && GOOS=windows GOARCH=amd64 go build -o editors/code/plantuml-lsp.exe",
+    "test-install:local": "npm run vscode:prepublish && npm run postinstall && vsce package && code --install-extension plantuml-lsp-*.vsix"
   },
   "devDependencies": {
     "@types/node": "^22.13.10",

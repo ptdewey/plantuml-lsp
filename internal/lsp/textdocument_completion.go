@@ -25,6 +25,7 @@ const (
 type CompletionItem struct {
 	Label               string             `json:"label"`
 	Detail              string             `json:"detail"`
+	FilterText          *string            `json:"filterText"`
 	Documentation       string             `json:"documentation"`
 	Kind                CompletionItemKind `json:"kind"`
 	InsertText          string             `json:"insertText"`

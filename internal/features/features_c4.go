@@ -67,8 +67,10 @@ func getC4Snippets() []lsp.CompletionItem {
 		"C4_blue", "C4_brown", "C4_green", "C4_sandstone", "C4_superhero", "C4_united", "C4_violet",
 	}
 	for _, t := range themes {
+		filter := "C4"
 		completionItems = append(completionItems, lsp.CompletionItem{
 			Label:            t,
+			FilterText:       &filter,
 			Detail:           "Theme",
 			Documentation:    "Invoke theme `" + t + "`",
 			Kind:             lsp.Snippet,

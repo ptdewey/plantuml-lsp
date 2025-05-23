@@ -31,15 +31,11 @@ func NewState() State {
 
 func (s *State) OpenDocument(uri, text string, execPath []string) []lsp.Diagnostic {
 	s.Documents[uri] = text
-
 	return getDiagnosticsForFile(text, execPath)
 }
 
 func (s *State) UpdateDocument(uri, text string, execPath []string) []lsp.Diagnostic {
 	s.Documents[uri] = text
-
-	// PERF: wait timer before running syntax checker -- possibly use channels?
-	// - this slows down completion when typing (can also be ignored by calling UpdateDocument in a separate goroutine)
 	return getDiagnosticsForFile(text, execPath)
 }
 

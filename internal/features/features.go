@@ -20,7 +20,7 @@ func GetFeatures(stdlibDir string) ([]lsp.CompletionItem, map[string]lsp.HoverRe
 	}
 	completionItems = append(completionItems, getCoreSnippets()...)
 
-	c4path := ""
+	var c4path string
 	if _, err := os.Stat(filepath.Join(stdlibDir, "C4")); err == nil {
 		c4path = filepath.Join(stdlibDir, "C4")
 	} else if _, err := os.Stat(filepath.Join(stdlibDir, "c4")); err == nil {
