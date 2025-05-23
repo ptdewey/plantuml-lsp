@@ -3,6 +3,7 @@ package analysis
 import (
 	completion "github.com/ptdewey/plantuml-lsp/internal/features"
 	"github.com/ptdewey/plantuml-lsp/internal/lsp"
+	"github.com/ptdewey/plantuml-lsp/internal/utils/debounce"
 )
 
 // TODO: should these be moved to State?
@@ -16,10 +17,16 @@ var (
 type State struct {
 	// Map of file names to contents
 	Documents map[string]string
+
+	// Debounce timers for different features (primarily for diagnostics)
+	Timers map[string]*debounce.Debouncer
 }
 
 func NewState() State {
-	return State{Documents: map[string]string{}}
+	return State{
+		Documents: map[string]string{},
+		Timers:    map[string]*debounce.Debouncer{},
+	}
 }
 
 func (s *State) OpenDocument(uri, text string, execPath []string) []lsp.Diagnostic {

@@ -3,13 +3,16 @@ package handler
 import (
 	"encoding/json"
 	"io"
+	"time"
 
 	"github.com/ptdewey/plantuml-lsp/internal/analysis"
 	"github.com/ptdewey/plantuml-lsp/internal/lsp"
 	"github.com/ptdewey/plantuml-lsp/internal/rpc"
+	"github.com/ptdewey/plantuml-lsp/internal/utils/debounce"
 )
 
-// FIX: logging to lsp log not working
+var debounceDelay time.Duration = 500 * time.Millisecond
+
 func HandleMessage(writer io.Writer, state analysis.State, method string, contents []byte, stdlibPath string, execPath []string) {
 	SendLogMessage(writer, "Received msg with method: "+method, lsp.Debug)
 
@@ -59,24 +62,36 @@ func HandleMessage(writer io.Writer, state analysis.State, method string, conten
 			return
 		}
 
-		SendLogMessage(writer, "Changed: "+request.Params.TextDocument.URI, lsp.Debug)
+		uri := request.Params.TextDocument.URI
 
-		// Goroutine here may be band-aid fix for diagnostics performance
-		go func() {
-			for _, change := range request.Params.ContentChanges {
-				diagnostics := state.UpdateDocument(request.Params.TextDocument.URI, change.Text, execPath)
-				writeResponse(writer, lsp.PublishDiagnosticsNotification{
-					Notification: lsp.Notification{
-						RPC:    "2.0",
-						Method: "textDocument/publishDiagnostics",
-					},
-					Params: lsp.PublishDiagnosticsParams{
-						URI:         request.Params.TextDocument.URI,
-						Diagnostics: diagnostics,
-					},
+		SendLogMessage(writer, "Changed: "+uri, lsp.Debug)
+
+		d, exists := state.Timers["textDocument/didChange"]
+		if !exists {
+			d = debounce.New(debounceDelay,
+				func(args ...any) {
+					uri := args[0].(string)
+					changes := args[1].([]lsp.TextDocumentContentChangeEvent)
+					for _, change := range changes {
+						diagnostics := state.UpdateDocument(uri, change.Text, execPath)
+						writeResponse(writer, lsp.PublishDiagnosticsNotification{
+							Notification: lsp.Notification{
+								RPC:    "2.0",
+								Method: "textDocument/publishDiagnostics",
+							},
+							Params: lsp.PublishDiagnosticsParams{
+								URI:         uri,
+								Diagnostics: diagnostics,
+							},
+						})
+					}
 				})
-			}
-		}()
+			state.Timers["textDocument/didChange"] = d
+		}
+
+		// Debounce diagnostics to avoid spawning many plantuml processes at once
+		d.Set(uri, request.Params.ContentChanges)
+		d.Debounced()
 
 	case "textDocument/hover":
 		var request lsp.HoverRequest
@@ -127,7 +142,10 @@ func writeResponse(writer io.Writer, msg any) {
 		return
 	}
 
-	writer.Write([]byte(reply))
+	if _, err := writer.Write([]byte(reply)); err != nil {
+		SendLogMessage(writer, "Error writing reponse: "+err.Error(), lsp.Error)
+		return
+	}
 }
 
 func SendLogMessage(writer io.Writer, message string, level int) {
