@@ -46,7 +46,7 @@ func getCoreSnippets() []lsp.CompletionItem {
 			Kind:          lsp.Snippet,
 			// REFACTOR: determine optimal snippet behavior for startuml
 			// - behaves differently in vscode with InsertText
-			InsertText: "@startuml\n",
+			InsertText: "@startuml\n$0",
 			// TextEdit: &lsp.TextEdit{
 			// 	NewText: "@startuml\n",
 			// 	Range: lsp.Range{
@@ -60,7 +60,7 @@ func getCoreSnippets() []lsp.CompletionItem {
 			// 		},
 			// 	},
 			// },
-			InsertTextFormat: lsp.PlainText,
+			InsertTextFormat: lsp.FormatSnippet,
 			AdditionalTextEdits: []lsp.TextEdit{
 				{
 					NewText: "\n@enduml",

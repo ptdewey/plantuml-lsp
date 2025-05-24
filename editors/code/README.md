@@ -46,7 +46,7 @@ The following options can be set in your user settings
 - [ ] User Defined (Todo)
 
 - [ ] Snippets (WIP)
-    - [ ] Core (Todo)
+    - [ ] Core (WIP)
     - [x] stdlib/C4
 
 #### Hover
@@ -59,7 +59,7 @@ The following options can be set in your user settings
 
 #### Definition
 - [ ] Core (Might be impossible with plantuml project structure)
-- [ ] stdlib/C4 (Todo)
+- [x] stdlib/C4 (Todo)
 - [ ] Other stdlib (Backlog)
 - [ ] User Defined (Backlog)
 
