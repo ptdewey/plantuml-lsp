@@ -10,30 +10,37 @@ import (
 
 	"github.com/ptdewey/plantuml-lsp/internal/analysis"
 	"github.com/ptdewey/plantuml-lsp/internal/handler"
+	"github.com/ptdewey/plantuml-lsp/internal/logger"
 	"github.com/ptdewey/plantuml-lsp/internal/lsp"
 	"github.com/ptdewey/plantuml-lsp/internal/rpc"
 	"github.com/ptdewey/plantuml-lsp/internal/utils"
 )
 
+var (
+	useStdio   bool
+	stdlibPath string
+	execCmd    string
+	jarPath    string
+)
+
 func main() {
-	// TODO: pass in plantuml_lsp.rc file to use for config stuff
-	// - include log level https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#window_logMessage
-	stdlibPath := flag.String("stdlib-path", "", "PlantUML stdlib path")
-	execCmd := flag.String("exec-path", "", "PlantUML executable command")
-	jarPath := flag.String("jar-path", "", "PlantUML jar path")
+	flag.BoolVar(&useStdio, "stdio", true, "Deprecated.")
+	flag.StringVar(&stdlibPath, "stdlib-path", "", "PlantUML stdlib path")
+	flag.StringVar(&execCmd, "exec-path", "", "PlantUML executable command")
+	flag.StringVar(&jarPath, "jar-path", "", "PlantUML jar path")
 	flag.Parse()
 
 	var err error
-	*stdlibPath, err = utils.SanitizePath(*stdlibPath)
+	stdlibPath, err = utils.SanitizePath(stdlibPath)
 	if err != nil {
 		panic(err)
 	}
 
 	var plantumlCmd []string
-	if len(*execCmd) > 0 {
-		cmd := *execCmd
-		if strings.HasPrefix(*execCmd, string(filepath.Separator)) || strings.HasPrefix(*execCmd, "~") {
-			cmd, err = utils.SanitizePath(*execCmd)
+	if len(execCmd) > 0 {
+		cmd := execCmd
+		if strings.HasPrefix(execCmd, string(filepath.Separator)) || strings.HasPrefix(execCmd, "~") {
+			cmd, err = utils.SanitizePath(execCmd)
 			if err != nil {
 				panic(err)
 			}
@@ -43,8 +50,8 @@ func main() {
 			}
 		}
 		plantumlCmd = []string{cmd}
-	} else if len(*jarPath) > 0 {
-		jar, err := utils.SanitizePath(*jarPath)
+	} else if len(jarPath) > 0 {
+		jar, err := utils.SanitizePath(jarPath)
 		if err != nil {
 			panic(err)
 		}
@@ -61,16 +68,16 @@ func main() {
 	state := analysis.NewState()
 	writer := os.Stdout
 
-	handler.SendLogMessage(writer, "Started plantuml-lsp", lsp.Debug)
+	logger.SendLogMessage(writer, "Started plantuml-lsp", lsp.Debug)
 
 	for scanner.Scan() {
 		msg := scanner.Bytes()
 		method, contents, err := rpc.DecodeMessage(msg)
 		if err != nil {
-			handler.SendLogMessage(writer, "Error decoding message: "+err.Error(), lsp.Error)
+			logger.SendLogMessage(writer, "Error decoding message: "+err.Error(), lsp.Error)
 			continue
 		}
 
-		handler.HandleMessage(writer, state, method, contents, *stdlibPath, plantumlCmd)
+		handler.HandleMessage(writer, state, method, contents, stdlibPath, plantumlCmd)
 	}
 }

@@ -6,7 +6,7 @@ import (
 	"path/filepath"
 
 	"github.com/ptdewey/plantuml-lsp/internal/lsp"
-	"github.com/ptdewey/plantuml-lsp/internal/parse"
+	"github.com/ptdewey/plantuml-lsp/internal/parse/stdlib"
 )
 
 // TODO: add support for other lsp features (i.e. go to definition)
@@ -15,6 +15,8 @@ func getC4Items(c4dir string) ([]lsp.CompletionItem, map[string]lsp.HoverResult,
 	hoverResults := make(map[string]lsp.HoverResult)
 	definitions := make(map[string]lsp.Location)
 
+	// TODO: move dir walking to parse/stdlib package
+	// this function should only set create the feature related items
 	err := filepath.WalkDir(c4dir, func(path string, d os.DirEntry, err error) error {
 		if err != nil {
 			return err
@@ -25,7 +27,7 @@ func getC4Items(c4dir string) ([]lsp.CompletionItem, map[string]lsp.HoverResult,
 			if err != nil {
 				return err
 			}
-			c4items := parse.ExtractC4Items(string(content))
+			c4items := stdlib.ExtractC4Items(string(content))
 			for _, item := range c4items {
 				// add value if it is not a duplicate
 				if _, exists := hoverResults[item.Name]; !exists {
@@ -57,6 +59,7 @@ func getC4Snippets() []lsp.CompletionItem {
 
 	// FIX: Replace previously typed text on completion trigger.
 	// - Current behavior fills in from cursor position to end of line, doesn't remove any previously typed text
+	// - Use "https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/#insertReplaceEdit"
 
 	// theme snippets
 	themePath := "https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/themes"
@@ -64,13 +67,15 @@ func getC4Snippets() []lsp.CompletionItem {
 		"C4_blue", "C4_brown", "C4_green", "C4_sandstone", "C4_superhero", "C4_united", "C4_violet",
 	}
 	for _, t := range themes {
+		filter := "C4"
 		completionItems = append(completionItems, lsp.CompletionItem{
 			Label:            t,
+			FilterText:       &filter,
 			Detail:           "Theme",
 			Documentation:    "Invoke theme `" + t + "`",
-			Kind:             15,
+			Kind:             lsp.Snippet,
 			InsertText:       "!theme " + t + " from " + themePath,
-			InsertTextFormat: 2,
+			InsertTextFormat: lsp.FormatSnippet,
 		})
 	}
 
@@ -84,9 +89,9 @@ func getC4Snippets() []lsp.CompletionItem {
 			Label:            i,
 			Detail:           "Theme",
 			Documentation:    "Include `C4/" + i + "`",
-			Kind:             15,
+			Kind:             lsp.Snippet,
 			InsertText:       "!include " + includePath + i + ".puml", // TODO: this would have to change to allow local/builtin include
-			InsertTextFormat: 2,
+			InsertTextFormat: lsp.FormatSnippet,
 		})
 	}
 

@@ -38,7 +38,14 @@ func parsePlantUmlDiagnostics(plantUmlDiagnostics string, text []string) []lsp.D
 		return []lsp.Diagnostic{}
 	}
 
-	lineLength := len(text[lineNumber])
+	var lineLength int
+	if len(text) >= lineNumber {
+		lineLength = len(text[lineNumber])
+	} else {
+		// If `lineNumber` exceeds number of lines in a file, fall back to zero values.
+		lineLength = 0
+		lineNumber = 0
+	}
 
 	parsedDiagnostics := []lsp.Diagnostic{}
 	parsedDiagnostics = append(parsedDiagnostics, lsp.Diagnostic{

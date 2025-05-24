@@ -8,7 +8,11 @@ func (s *State) TextDocumentCompletion(id int, uri string) lsp.CompletionRespons
 			RPC: "2.0",
 			ID:  &id,
 		},
-		Result: completionItems,
+		// Result: completionItems,
+		Result: lsp.CompletionList{
+			IsIncomplete: true,
+			Items:        completionItems,
+		},
 	}
 
 	return response

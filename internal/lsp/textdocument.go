@@ -40,6 +40,7 @@ type WorkspaceEdit struct {
 }
 
 type TextEdit struct {
-	Range   Range  `json:"range"`
 	NewText string `json:"newText"`
+	Range   Range  `json:"range"`
+	// Replace *Range `json:"replace"`
 }

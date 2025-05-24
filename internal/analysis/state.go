@@ -3,6 +3,7 @@ package analysis
 import (
 	completion "github.com/ptdewey/plantuml-lsp/internal/features"
 	"github.com/ptdewey/plantuml-lsp/internal/lsp"
+	"github.com/ptdewey/plantuml-lsp/internal/utils/debounce"
 )
 
 // TODO: should these be moved to State?
@@ -16,23 +17,25 @@ var (
 type State struct {
 	// Map of file names to contents
 	Documents map[string]string
+
+	// Debounce timers for different features (primarily for diagnostics)
+	Timers map[string]*debounce.Debouncer
 }
 
 func NewState() State {
-	return State{Documents: map[string]string{}}
+	return State{
+		Documents: map[string]string{},
+		Timers:    map[string]*debounce.Debouncer{},
+	}
 }
 
 func (s *State) OpenDocument(uri, text string, execPath []string) []lsp.Diagnostic {
 	s.Documents[uri] = text
-
 	return getDiagnosticsForFile(text, execPath)
 }
 
 func (s *State) UpdateDocument(uri, text string, execPath []string) []lsp.Diagnostic {
 	s.Documents[uri] = text
-
-	// PERF: wait timer before running syntax checker -- possibly use channels?
-	// - this slows down completion when typing (can also be ignored by calling UpdateDocument in a separate goroutine)
 	return getDiagnosticsForFile(text, execPath)
 }
 
