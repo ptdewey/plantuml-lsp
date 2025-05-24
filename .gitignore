@@ -10,3 +10,5 @@ client/server
 .vscode-test
 tsconfig.tsbuildinfo
 *.vsix
+.env
+env.sh

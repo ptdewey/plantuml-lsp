@@ -23,16 +23,15 @@ const (
 )
 
 type CompletionItem struct {
-	Label         string             `json:"label"`
-	Detail        string             `json:"detail"`
-	FilterText    *string            `json:"filterText"`
-	Documentation string             `json:"documentation"`
-	Kind          CompletionItemKind `json:"kind"`
-	InsertText    string             `json:"insertText"`
-	// FIX: The `TextEdit` field existing (it is supposed to be optional) breaks vscode completion
-	// TextEdit            *TextEdit          `json:"textEdit"`
-	InsertTextFormat    InsertTextFormat `json:"insertTextFormat"`
-	AdditionalTextEdits []TextEdit       `json:"additionalTextEdits"`
+	Label               string             `json:"label"`
+	Detail              string             `json:"detail"`
+	FilterText          *string            `json:"filterText,omitempty"`
+	Documentation       string             `json:"documentation"`
+	Kind                CompletionItemKind `json:"kind"`
+	InsertText          string             `json:"insertText"`
+	TextEdit            *TextEdit          `json:"textEdit,omitempty"`
+	InsertTextFormat    InsertTextFormat   `json:"insertTextFormat"`
+	AdditionalTextEdits []TextEdit         `json:"additionalTextEdits"`
 }
 
 type CompletionItemKind int
@@ -69,6 +68,6 @@ const (
 
 type CompletionList struct {
 	IsIncomplete bool `json:"isIncomplete"`
-	// TODO: ItemDefaults *ItemDefaults `json:"itemDefaults"`
+	// TODO: ItemDefaults *ItemDefaults `json:"itemDefaults,omitempty"`
 	Items []CompletionItem `json:"items"`
 }
