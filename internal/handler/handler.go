@@ -13,6 +13,7 @@ import (
 
 var debounceDelay time.Duration = 1000 * time.Millisecond
 
+// REFACTOR: update `SendLogMessage` to not take in writer, remove param here
 func HandleMessage(writer io.Writer, state analysis.State, method string, contents []byte, stdlibPath string, execPath []string) {
 	logger.SendLogMessage(writer, "Received msg with method: "+method, lsp.Debug)
 

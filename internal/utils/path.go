@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -11,7 +12,7 @@ func SanitizePath(path string) (string, error) {
 	if strings.HasPrefix(path, "~") {
 		home, err := os.UserHomeDir()
 		if err != nil {
-			return "", err
+			return "", fmt.Errorf("failed to fetch user home directory: %v", err)
 		}
 		path = filepath.Join(home, path[1:])
 	}
@@ -20,11 +21,9 @@ func SanitizePath(path string) (string, error) {
 		path = os.ExpandEnv(path)
 	}
 
-	cleaned := filepath.Clean(path)
-
-	abs, err := filepath.Abs(cleaned)
+	abs, err := filepath.Abs(filepath.Clean(path))
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("failed to convert '%s' to absolute path: %v", path, err)
 	}
 
 	return abs, nil
