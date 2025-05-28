@@ -7,6 +7,7 @@ import (
 	"github.com/ptdewey/plantuml-lsp/internal/rpc"
 )
 
+// REFACTOR: init function that takes in writer and spawns logger instance, remove writer param from `SendLogMessage`
 func SendLogMessage(writer io.Writer, message string, level int) {
 	logMessage := lsp.LogMessage{
 		Notification: lsp.Notification{
@@ -22,6 +23,7 @@ func SendLogMessage(writer io.Writer, message string, level int) {
 	WriteResponse(writer, logMessage)
 }
 
+// REFACTOR: use logger instance's writer
 func WriteResponse(writer io.Writer, msg any) {
 	reply, err := rpc.EncodeMessage(msg)
 	if err != nil {

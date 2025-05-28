@@ -24,20 +24,25 @@ var (
 )
 
 func main() {
-	flag.BoolVar(&useStdio, "stdio", true, "Deprecated.")
+	writer := os.Stdout
+	state := analysis.NewState()
+
+	flag.BoolVar(&useStdio, "stdio", true, "Dummy flag that prevents errors in some editors.")
 	flag.StringVar(&stdlibPath, "stdlib-path", "", "PlantUML stdlib path")
 	flag.StringVar(&execCmd, "exec-path", "", "PlantUML executable command")
 	flag.StringVar(&jarPath, "jar-path", "", "PlantUML jar path")
 	flag.Parse()
 
 	var err error
-	stdlibPath, err = utils.SanitizePath(stdlibPath)
-	if err != nil {
-		panic(err)
+	if stdlibPath != "" {
+		stdlibPath, err = utils.SanitizePath(stdlibPath)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	var plantumlCmd []string
-	if len(execCmd) > 0 {
+	if execCmd != "" {
 		cmd := execCmd
 		if strings.HasPrefix(execCmd, string(filepath.Separator)) || strings.HasPrefix(execCmd, "~") {
 			cmd, err = utils.SanitizePath(execCmd)
@@ -50,7 +55,7 @@ func main() {
 			}
 		}
 		plantumlCmd = []string{cmd}
-	} else if len(jarPath) > 0 {
+	} else if jarPath != "" {
 		jar, err := utils.SanitizePath(jarPath)
 		if err != nil {
 			panic(err)
@@ -62,13 +67,10 @@ func main() {
 		plantumlCmd = []string{"java", "-jar", jar}
 	}
 
+	logger.SendLogMessage(writer, "Started plantuml-lsp", lsp.Debug)
+
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Split(rpc.Split)
-
-	state := analysis.NewState()
-	writer := os.Stdout
-
-	logger.SendLogMessage(writer, "Started plantuml-lsp", lsp.Debug)
 
 	for scanner.Scan() {
 		msg := scanner.Bytes()
