@@ -87,7 +87,7 @@ func getC4Snippets() []lsp.CompletionItem {
 	for _, i := range includes {
 		completionItems = append(completionItems, lsp.CompletionItem{
 			Label:            i,
-			Detail:           "Theme",
+			Detail:           "C4 Level",
 			Documentation:    "Include `C4/" + i + "`",
 			Kind:             lsp.Snippet,
 			InsertText:       "!include " + includePath + i + ".puml", // TODO: this would have to change to allow local/builtin include
