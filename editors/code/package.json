@@ -5,7 +5,8 @@
   "author": "Patrick Dewey",
   "publisher": "ptdewey",
   "license": "MIT",
-  "version": "0.5.2",
+  "version": "0.5.3",
+  "icon": "assets/plantuml-lsp-logo.png",
   "categories": ["Programming Languages", "Snippets", "Other"],
   "repository": {
     "type": "git",
@@ -48,7 +49,8 @@
     "LICENSE",
     "plantuml-lsp",
     "plantuml-lsp-darwin",
-    "plantuml-lsp.exe"
+    "plantuml-lsp.exe",
+    "assets"
   ],
   "scripts": {
     "vscode:prepublish": "npm run compile",
